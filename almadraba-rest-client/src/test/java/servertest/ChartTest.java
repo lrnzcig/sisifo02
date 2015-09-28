@@ -31,5 +31,6 @@ public class ChartTest {
 		Assert.assertEquals(200, response.getStatus());
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		System.out.println(chart.getSeries().length);
+		System.out.println(chart.getStepIds().length);		
 	}
 }
