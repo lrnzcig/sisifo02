@@ -1,3 +1,6 @@
 target/
-html/*
-!html/index.html
+html/
+almadraba-server/src/main/webapp/*
+!almadraba-server/src/main/webapp/index.html
+!almadraba-server/src/main/webapp/WEB-INF
+!almadraba-server/src/main/webapp/index.jsp

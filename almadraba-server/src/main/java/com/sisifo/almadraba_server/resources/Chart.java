@@ -1,6 +1,5 @@
 package com.sisifo.almadraba_server.resources;
 
-import java.math.BigInteger;
 import java.util.List;
 
 import javax.ws.rs.PUT;
@@ -32,16 +31,13 @@ public class Chart {
     		throw new AlmadrabaAuthenticationException("body method");
     	}
     	
-    	// TODO move "getSessionFactory()" to init
     	Session session = AlmadrabaContextListener.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 		
 		int number = params.getNumber();
 		QueryType type = params.getQueryType();
 		
-		BigInteger[] additionalUserIds = new BigInteger[] {BigInteger.valueOf(38643994)};
-		
-		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getTopUserSeriesSQL(session, number, additionalUserIds);
+		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getTopUserSeriesSQL(session, number, "full", null); // "window"
 		System.out.println(rowsSql.size());
 		
 		session.disconnect();

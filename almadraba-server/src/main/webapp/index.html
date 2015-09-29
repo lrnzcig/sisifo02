@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ALMADRABA</title>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="font-awesome/css/font-awesome.css" rel="stylesheet">
+    <link href="css/plugins/iCheck/custom.css" rel="stylesheet">
+    <link href="css/plugins/chosen/chosen.css" rel="stylesheet">
+    <link href="css/animate.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+    <div id="wrapper">
+
+
+        <div id="page-wrapper" class="gray-bg">
+            <div class="row wrapper border-bottom white-bg page-heading">
+                <div class="col-lg-10">
+                    <h2>Almadraba</h2>
+                    <h4>Twitter users notoriety analysis</h4>
+                    <ol class="breadcrumb">
+                        <li>
+                            <a href="index.html">Home</a>
+                        </li>
+                        <li class="active">
+                            <strong>Almadraba</strong>
+                        </li>
+                    </ol>
+                </div>
+                <div class="col-lg-2">
+
+                </div>
+            </div>
+            <div class="wrapper wrapper-content animated fadeInRight">
+
+              <div id="log-in-row" class="row">
+                  <div class="col-lg-5">
+                      <div class="ibox float-e-margins">
+                          <div class="ibox-title">
+                              <h5>Log in</h5>
+                              <div class="ibox-tools">
+                                  <a id="log-in-collapse" class="collapse-link">
+                                      <i class="fa fa-chevron-up"></i>
+                                  </a>
+                                  <a class="close-link">
+                                      <i class="fa fa-times"></i>
+                                  </a>
+                              </div>
+                          </div>
+                          <div class="ibox-content">
+                              <form class="form-horizontal">
+                                  <div id="log-in-message">
+                                    <p>Please introduce your credentials.</p>
+                                  </div>
+                                  <div class="form-group"><label class="col-lg-2 control-label">Email</label>
+                                      <div class="col-lg-10"><input id="username" type="email" placeholder="Email" class="form-control"></input>
+                                      </div>
+                                  </div>
+                                  <div class="form-group"><label class="col-lg-2 control-label">Password</label>
+                                      <div class="col-lg-10"><input id="password" type="password" placeholder="Password" class="form-control"></input></div>
+                                  </div>
+                                  <div class="form-group">
+                                      <div class="col-lg-offset-2 col-lg-10">
+                                          <button class="btn btn-sm btn-white" type="button" id="log-in">Sign in</button>
+                                      </div>
+                                  </div>
+                              </form>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+
+              <div id="submit-form" class="row">
+                  <div class="col-lg-8">
+                    <div class="ibox float-e-margins">
+                      <div class="ibox-title">
+                          <h5>Search criteria</h5>
+
+                          <div class="ibox-tools">
+                              <a id="submit-form-collapse" class="collapse-link">
+                                  <i class="fa fa-chevron-up"></i>
+                              </a>
+                              <a class="close-link">
+                                  <i class="fa fa-times"></i>
+                              </a>
+                          </div>
+                      </div>
+                      <div class="ibox-content">
+
+                          <h5>Type of query</h5>
+                          <select id="select-type-of-query" data-placeholder="Choose query type..." class="chosen-select" style="width:350px;" tabindex="2">
+                            <option value="">Select</option>
+                          </select>
+
+                          <h5>Number of users</h5>
+                          <input id="number-of-users" class="form-control" style="min-width:40px"></input>
+                          <form class="form-horizontal">
+                            <div class="form-group">
+                              <div class="col-lg-offset-0 col-lg-10">
+                                <button class="btn btn-sm btn-white" type="button" id="submit-data">Get chart</button>
+                              </div>
+                            </div>
+                          </form>
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div id="chart" class="row">
+                <div class="col-lg-8">
+                  <div class="ibox float-e-margins">
+                      <div class="ibox-title">
+                          <h5>Chart</h5>
+                          <div class="ibox-tools">
+                              <a id="chart-collapse" class="collapse-link">
+                                  <i class="fa fa-chevron-up"></i>
+                              </a>
+                              <a class="close-link">
+                                  <i class="fa fa-times"></i>
+                              </a>
+                          </div>
+                      </div>
+                      <div id="high-charts-container-parent" class="ibox-content">
+                        <div id="high-charts-container"></div>
+
+                      </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="footer">
+                  <div>
+                      <strong>Copyright</strong> Almadraba &copy; 2015
+                  </div>
+              </div>
+
+            </div>
+        </div>
+    </div>
+
+
+    <!-- Mainly scripts -->
+    <script src="js/jquery-2.1.1.js"></script>
+    <script src="js/bootstrap.js"></script>
+    <script src="js/plugins/metisMenu/jquery.metisMenu.js"></script>
+    <script src="js/plugins/slimscroll/jquery.slimscroll.min.js"></script>
+
+    <!-- Custom and plugin javascript -->
+    <script src="js/inspinia.js"></script>
+    <script src="js/plugins/pace/pace.min.js"></script>
+
+    <!-- Chosen -->
+    <script src="js/plugins/chosen/chosen.jquery.js"></script>
+    <script>
+      $(document).ready(function () {
+        var config = {
+                '.chosen-select'           : {},
+                '.chosen-select-deselect'  : {allow_single_deselect:true},
+                '.chosen-select-no-single' : {disable_search_threshold:10},
+                '.chosen-select-no-results': {no_results_text:'Oops, nothing found!'},
+                '.chosen-select-width'     : {width:"95%"}
+        }
+        for (var selector in config) {
+            $(selector).chosen(config[selector]);
+        }
+      });
+    </script>
+
+    <!-- iCheck -->
+    <script src="js/plugins/iCheck/icheck.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $('.i-checks').iCheck({
+          checkboxClass: 'icheckbox_square-green',
+          radioClass: 'iradio_square-green',
+        });
+      });
+    </script>
+
+    <!-- ebola button controllers -->
+    <script>
+      $(document).ready(function(){
+
+        document.getElementById("submit-form-collapse").click();
+
+        var chart_collapse = document.getElementById("chart-collapse");
+        chart_collapse.click();
+
+        var is_chart_collapsed = function() {
+          var button_chart_collapse = $(chart_collapse).find("i");
+          var classList = button_chart_collapse.attr("class").split(/\s+/);
+          var arrayLength = classList.length;
+          for (var i=0; i < arrayLength; i++) {
+            if (classList[i] == "fa-chevron-up") {
+              return false;
+            }
+            if (classList[i] == "fa-chevron-down") {
+              return true;
+            }
+          }
+        };
+
+        // load empty chart so that it gets size
+        var chart = ChartSingleton.getInstance();
+        chart.update();
+
+        // Combo controller (TODO)
+        var type_of_query = null;
+        var selected_type_of_query_controller = function () {
+          type_of_query = this.options[select.selectedIndex].text;
+        }
+
+        // Login button controller
+        $('#log-in').click(function(){
+          auth = btoa(document.getElementById('username').value + ':' + document.getElementById('password').value);
+          $.ajax({
+            url: 'http://localhost:8080/almadraba/webapi/login',
+            type: 'GET',
+            headers: {
+              "Authorization": 'Basic ' + auth
+              //"Origin": "http://www.sisifo.com",
+              //"Access-Control-Request-Method" : "GET",
+              //"Access-Control-Request-Headers" : "Authorization"
+            },
+            complete: function(e, xhr, settings){
+              if (e.status == 200) {
+              } else if (e.status === 401){
+                var element = document.getElementById("log-in-message");
+                element.innerHTML = "<p>Wrong user id or password</p>";
+                element.style.backgroundColor = 'yellow'
+              } else if (e.status === 500){
+                var element = document.getElementById("log-in-message");
+                element.innerHTML = "<p>Fatal error in server</p>";
+                element.style.backgroundColor = "rgb(200, 0, 20)"
+              } else {
+                var element = document.getElementById("log-in-message");
+                element.innerHTML = "<p>Unexpected fatal error. Is server up?</p>";
+                element.style.backgroundColor = "rgb(200, 0, 20)"
+              }
+            },
+            success: function(data, textStatus, jqXHR) {
+              //select = document.getElementById("select-type-of-query");
+
+              // TODO add elements to select
+              //$(select).trigger("chosen:updated");
+
+              // controller for the combo => fetches new data
+              //$(select).chosen().change(selected_type_of_query_controller);
+
+              document.getElementById("log-in-collapse").click();
+              document.getElementById("submit-form-collapse").click();
+
+            }
+          });
+        });
+
+        // utility for getting input from form
+        var get_input_data = function () {
+          number_of_users = document.getElementById('number-of-users').value
+          input_data = {
+            "number" : number_of_users,
+            "queryType":  type_of_query
+          }
+          return input_data;
+        }
+
+        // Submit data controller
+        $('#submit-data').click(function(){
+          $.ajax({
+            url: 'http://localhost:8080/almadraba/webapi/chart',
+            type: 'PUT',
+            data: JSON.stringify(get_input_data()),
+            contentType: 'application/json',
+            headers: {
+              "Authorization": 'Basic ' + auth
+              //"Origin": "http://www.sisifo.com",
+              //"Access-Control-Request-Method" : "PUT",
+              //"Access-Control-Request-Headers" : "Authorization"
+            },
+            complete: function(e, xhr, settings){
+              if (e.status == 200) {
+              } else if (e.status === 401){
+                var element = document.getElementById("log-in-message");
+                element.innerHTML = "<p>Wrong user id or password</p>";
+                element.style.backgroundColor = 'yellow'
+              } else if (e.status === 500){
+                var element = document.getElementById("log-in-message");
+                element.innerHTML = "<p>Fatal error in server</p>";
+                element.style.backgroundColor = "rgb(200, 0, 20)"
+              } else {
+                var element = document.getElementById("log-in-message");
+                element.innerHTML = "<p>Unexpected fatal error. Is server up?</p>";
+                element.style.backgroundColor = "rgb(200, 0, 20)"
+              }
+            },
+            success: function(data, textStatus, jqXHR) {
+              var chart = ChartSingleton.getInstance();
+              if (data.series) {
+                if (is_chart_collapsed()) {
+                  chart_collapse.click();
+                }
+                chart.set_series(data.series);
+                chart.set_xaxis(data.stepIds);
+                chart.update();
+                document.getElementById("chart").focus()
+              } else {
+                console.log("Error in response from server. No data.series")
+              }
+            }
+          });
+        });
+
+      });
+    </script>
+
+    <!-- highcharts -->
+    <script src="js/highcharts/highcharts.js"></script>
+    <script src="js/highcharts/highcharts-more.js"></script>
+    <script src="js/highcharts/exporting.js"></script>
+    <script>
+      var ChartSingleton = (function () {
+
+        var instance;
+
+        function init() {
+
+          return {
+            // public methods and variables
+            series: null,
+            xaxis: null,
+            update: function () {
+              chart_update();
+            },
+            set_series: function(series) {
+              this.series = [];
+              var arrayLength = series.length;
+              for (var i=0; i < arrayLength; i++) {
+                obj = {
+                  "name" : series[i].userId,
+                  "data":  series[i].series
+                }
+                this.series.push(obj);
+              }
+            },
+            set_xaxis: function(xaxis) {
+              this.xaxis = [];
+              var arrayLength = xaxis.length;
+              for (var i=0; i < arrayLength; i++) {
+                this.xaxis.push(xaxis[i]);
+              }
+            }
+          };
+
+        };
+
+        return {
+
+          getInstance: function () {
+            if ( !instance ) {
+              instance = init();
+            }
+            return instance;
+          }
+
+        };
+      })();
+
+      var chart_update = (function () {
+
+          var chart = ChartSingleton.getInstance();
+          var series = chart.series,
+              xaxis = chart.xaxis;
+
+          $('#high-charts-container').highcharts({
+
+              title: {
+                  text: 'Users notoriety versus time'
+              },
+
+              xAxis: {
+                  categories: xaxis
+              },
+
+              yAxis: {
+                  title: {
+                      text: 'Page Rank'
+                  },
+                  plotLines: [{
+                      value: 0,
+                      width: 1,
+                      color: '#808080'
+                  }]
+              },
+
+              plotOptions: {
+                  series: {
+                      point: {
+                          events: {
+                              mouseOver: function () {
+                                  var chart = this.series.chart;
+                                  if (!chart.lbl) {
+                                      chart.lbl = chart.renderer.label('')
+                                          .attr({
+                                              padding: 10,
+                                              r: 10,
+                                              fill: Highcharts.getOptions().colors[1]
+                                          })
+                                          .css({
+                                              color: '#FFFFFF'
+                                          })
+                                          .add();
+                                  }
+                                  chart.lbl
+                                      .show()
+                                      .attr({
+                                          text: 'x: ' + this.x + ', y: ' + this.y
+                                      });
+                              }
+                          }
+                      },
+                      events: {
+                          mouseOut: function () {
+                              if (this.chart.lbl) {
+                                  this.chart.lbl.hide();
+                              }
+                          }
+                      }
+                  }
+              },
+
+              tooltip: {
+                  enabled: false
+              },
+
+              legend: {
+              },
+
+              series: series
+          });
+      });
+    </script>
+</body>
+
+</html>

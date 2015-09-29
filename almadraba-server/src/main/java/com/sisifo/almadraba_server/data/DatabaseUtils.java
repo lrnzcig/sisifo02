@@ -61,25 +61,22 @@ public class DatabaseUtils {
 	}
 
 	/**
-	select * from user_page_rank_evolution
-	where user_id in (select user_id
-	    from (select user_id as user_id, row_number() over() as rownumber 
-	        from user_page_rank_evolution 
-	        where rank_exec_id = 'full'
-	        and rank_step_id= 'rank'
-	        order by rank desc) as maxrows
-	    where rownumber <= 5)
-	and rank_exec_id = 'full'
-	*/
-
-	public static List<UserPageRankEvolution> getTopUserSeriesSQL(final Session session, final int number, final BigInteger[] additionalIds) {
+	 * Execute query directly in SQL
+	 * 
+	 * @param session
+	 * @param number
+	 * @param additionalIds e.g. new BigInteger[] {BigInteger.valueOf(38643994)}
+	 * @return
+	 */
+	public static List<UserPageRankEvolution> getTopUserSeriesSQL(final Session session, final int number, 
+			final String rankExecId, final BigInteger[] additionalIds) {
+		// TODO this assumes we want users order by full page rank and assuming name of the column also
 		String queryText = "select * from user_page_rank_evolution"
 				+ " where (user_id in (select user_id"
-				+ "	    	from (select user_id as user_id, row_number() over() as rownumber" 
-				+ "	        	from user_page_rank_evolution" 
-				+ "	        	where rank_exec_id = :rank_exec_id"
-				+ "	        	and rank_step_id= :rank_step_id"
-				+ "	        	order by rank desc) as maxrows"
+				+ "	    	from (select user_id as user_id, row_number() over(order by rank desc) as rownumber"
+				+ "	    	from user_page_rank_evolution"
+				+ "	    	where rank_exec_id = 'full'"
+				+ "	    	and rank_step_id = 'rank') as maxrows"
 				+ "	    	where rownumber <= :number)";
 		if (additionalIds != null) {
 			queryText = queryText + "     or user_id in (:list))";
@@ -91,8 +88,7 @@ public class DatabaseUtils {
 				+ " order by user_id, rank_step_id";
 		
 		Query q = session.createSQLQuery(queryText)
-				.setString("rank_exec_id", "full")
-				.setString("rank_step_id", "rank")
+				.setString("rank_exec_id", rankExecId)
 				.setInteger("number", number);
 		if (additionalIds != null) {
 			q.setParameterList("list", additionalIds);
@@ -146,7 +142,7 @@ public class DatabaseUtils {
 		for (UserPageRankEvolution upre : rows) {
 			BigInteger id = upre.getId().getUserId();
 			if (mapSeries.get(id) == null) {
-				mapSeries.put(id, new AlmadrabaSeries());				
+				mapSeries.put(id, new AlmadrabaSeries(id));				
 			}
 			
 			if (firstId == null || firstId.equals(id)) {

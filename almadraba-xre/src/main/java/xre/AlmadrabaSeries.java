@@ -12,10 +12,15 @@ public class AlmadrabaSeries {
 		super();
 	}
 
-	public AlmadrabaSeries(final BigInteger userId, final String rankExecId, final String rankStepId, final Float[] series) {
+	public AlmadrabaSeries(final BigInteger userId, final Float[] series) {
 		super();
 		this.userId = userId;
 		this.series = series;
+	}
+
+	public AlmadrabaSeries(final BigInteger userId) {
+		super();
+		this.userId = userId;
 	}
 
 	public BigInteger getUserId() {
