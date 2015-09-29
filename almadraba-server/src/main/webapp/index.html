@@ -248,13 +248,20 @@
               }
             },
             success: function(data, textStatus, jqXHR) {
-              //select = document.getElementById("select-type-of-query");
+              select = document.getElementById("select-type-of-query");
 
-              // TODO add elements to select
-              //$(select).trigger("chosen:updated");
+              // add elements to select
+              var arrayLength = data.queryTypes.length;
+              for (var i=0; i < arrayLength; i++) {
+                opt = document.createElement("option");
+                opt.value = data.queryTypes[i];
+                opt.text = data.queryTypes[i];
+                select.appendChild(opt);
+              }
+              $(select).trigger("chosen:updated");
 
-              // controller for the combo => fetches new data
-              //$(select).chosen().change(selected_type_of_query_controller);
+              // add controller for the combo
+              $(select).chosen().change(selected_type_of_query_controller);
 
               document.getElementById("log-in-collapse").click();
               document.getElementById("submit-form-collapse").click();

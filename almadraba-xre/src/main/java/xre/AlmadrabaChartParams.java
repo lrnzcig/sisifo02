@@ -6,7 +6,7 @@ import java.util.Map;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public class AlmadrabaChartParameters {
+public class AlmadrabaChartParams {
 	
 	public enum QueryType {
 		TOP,
@@ -38,7 +38,7 @@ public class AlmadrabaChartParameters {
 	private QueryType queryType;
 	private int number;
 	
-	public AlmadrabaChartParameters() {
+	public AlmadrabaChartParams() {
 		super();
 	}
 

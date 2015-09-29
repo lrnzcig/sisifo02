@@ -8,11 +8,12 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import almadraba_rest_client.utils.ClientUtils;
+import xre.AlmadrabaChartParamsArray;
 
 public class LoginTest {
 
 	@Test
-	public void getApps() {
+	public void getCombos() {
 		Client client = ClientUtils.getClientWithAuthenticationAndJackson();
 
 		Response response = client.target("http://localhost:8080/almadraba/webapi").path("login").request()
@@ -20,7 +21,7 @@ public class LoginTest {
 				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_PASSWORD, "pass")
 				.get();
 		Assert.assertEquals(200, response.getStatus());
-		String kk = response.readEntity(String.class);
-		System.out.println(kk);
+		AlmadrabaChartParamsArray pa = response.readEntity(AlmadrabaChartParamsArray.class);
+		System.out.println(pa.getQueryTypes().length);
 	}
 }

@@ -5,14 +5,16 @@ import java.util.Arrays;
 public class AlmadrabaChart {
 
 	private AlmadrabaSeries[] series;
-	private String rankExecId;
+	private Integer rankExecId;
+	private String rankExecLabel;
+	private Integer hourStep;
 	private String[] stepIds;
 	
 	public AlmadrabaChart() {
 		super();
 	}
 	
-	public AlmadrabaChart(final AlmadrabaSeries[] series, final String rankExecId, final String[] stepIds) {
+	public AlmadrabaChart(final AlmadrabaSeries[] series, final Integer rankExecId, final String[] stepIds) {
 		super();
 		this.setSeries(series);
 		this.setRankExecId(rankExecId);
@@ -56,12 +58,30 @@ public class AlmadrabaChart {
 		this.stepIds[this.stepIds.length - 1] = item;		
 	}
 
-	public String getRankExecId() {
+	public Integer getRankExecId() {
 		return rankExecId;
 	}
 
-	public void setRankExecId(final String rankExecId) {
+	public void setRankExecId(final Integer rankExecId) {
 		this.rankExecId = rankExecId;
 	}
+
+	public String getRankExecLabel() {
+		return rankExecLabel;
+	}
+
+	public void setRankExecLabel(final String rankExecLabel) {
+		this.rankExecLabel = rankExecLabel;
+	}
+
+	public Integer getHourStep() {
+		return hourStep;
+	}
+
+	public void setHourStep(final Integer hourStep) {
+		this.hourStep = hourStep;
+	}
+	
+	
 
 }

@@ -11,8 +11,8 @@ import org.junit.Test;
 
 import almadraba_rest_client.utils.ClientUtils;
 import xre.AlmadrabaChart;
-import xre.AlmadrabaChartParameters;
-import xre.AlmadrabaChartParameters.QueryType;
+import xre.AlmadrabaChartParams;
+import xre.AlmadrabaChartParams.QueryType;
 
 public class ChartTest {
 
@@ -20,7 +20,7 @@ public class ChartTest {
 	public void submitData() {
 		Client client = ClientUtils.getClientWithAuthenticationAndJackson();
 
-		AlmadrabaChartParameters params = new AlmadrabaChartParameters();
+		AlmadrabaChartParams params = new AlmadrabaChartParams();
 		params.setQueryType(QueryType.TOP);
 		params.setNumber(5);
 

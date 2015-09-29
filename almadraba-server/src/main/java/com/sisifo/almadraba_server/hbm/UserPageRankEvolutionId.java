@@ -3,6 +3,8 @@ package com.sisifo.almadraba_server.hbm;
 import java.io.Serializable;
 import java.math.BigInteger;
 
+import javax.persistence.Column;
+
 
 public class UserPageRankEvolutionId implements Serializable {
 	/**
@@ -10,43 +12,47 @@ public class UserPageRankEvolutionId implements Serializable {
 	 */
 	private static final long serialVersionUID = -4029780045025241802L;
 	
+	@Column(name="user_id")
 	private BigInteger userId;
-	private String rankExecId;
-	private String rankStepId;
+	@Column(name="rank_exec_id")
+	private Integer rankExecId;
+	@Column(name="step_order")
+	private Integer stepOrder;
 
 	public UserPageRankEvolutionId() {
 		super();
 	}
 		
-	public UserPageRankEvolutionId(BigInteger userId, String rankExecId, String rankStepId) {
+	public UserPageRankEvolutionId(final BigInteger userId, final Integer rankExecId,
+			final Integer stepOrder) {
 		super();
 		this.userId = userId;
 		this.rankExecId = rankExecId;
-		this.rankStepId = rankStepId;
+		this.stepOrder = stepOrder;
 	}
 
 	public BigInteger getUserId() {
 		return userId;
 	}
 
-	public void setUserId(BigInteger userId) {
+	public void setUserId(final BigInteger userId) {
 		this.userId = userId;
 	}
 
-	public String getRankExecId() {
+	public Integer getRankExecId() {
 		return rankExecId;
 	}
 
-	public void setRankExecId(String rankExecId) {
+	public void setRankExecId(final Integer rankExecId) {
 		this.rankExecId = rankExecId;
 	}
 
-	public String getRankStepId() {
-		return rankStepId;
+	public Integer getStepOrder() {
+		return stepOrder;
 	}
 
-	public void setRankStepId(String rankStepId) {
-		this.rankStepId = rankStepId;
+	public void setStepOrder(final Integer stepOrder) {
+		this.stepOrder = stepOrder;
 	}
 
 	

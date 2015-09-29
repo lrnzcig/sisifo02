@@ -15,10 +15,24 @@
     <class name="UserPageRankEvolution" table="user_page_rank_evolution">
         <composite-id name="id" class="UserPageRankEvolutionId">
 	        <key-property name="userId" type="big_integer" column="user_id"/>
-	        <key-property name="rankExecId" type="string" column="rank_exec_id"/>
-    	    <key-property name="rankStepId" type="string" column="rank_step_id"/>
+	        <key-property name="rankExecId" type="integer" column="rank_exec_id"/>
+    	    <key-property name="stepOrder" type="string" column="step_order"/>
         </composite-id>
         <property name="rank" type="float" column="rank"/>
+    </class>
+
+    <class name="UserPageRankExec" table="user_page_rank_exec">
+        <id name="id" type="integer" column="id"/>
+        <property name="rankExecLabel" type="string" column="rank_exec_label"/>
+        <property name="hourStep" type="string" column="hour_step"/>
+    </class>
+
+    <class name="UserPageRankExecStep" table="user_page_rank_exec_step">
+        <id name="id" type="integer" column="id"/>
+        <property name="rankExecId" type="integer" column="rank_exec_id"/>
+        <property name="rankStepLabel" type="string" column="rank_step_label"/>
+        <property name="stepOrder" type="integer" column="step_order"/>
+        <property name="stepTimestamp" type="date" column="step_timestamp"/>
     </class>
 
 </hibernate-mapping>

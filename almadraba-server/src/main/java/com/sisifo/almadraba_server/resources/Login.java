@@ -9,16 +9,18 @@ import javax.ws.rs.core.SecurityContext;
 
 import com.sisifo.almadraba_server.exception.AlmadrabaAuthenticationException;
 
+import xre.AlmadrabaChartParamsArray;
+
 @Path("login")
 public class Login {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public String getListOfApps(@Context SecurityContext securityContext) {
+    public AlmadrabaChartParamsArray loginAndGetCombos(@Context final SecurityContext securityContext) {
     	if (securityContext.getUserPrincipal() == null) {
     		throw new AlmadrabaAuthenticationException("body method");
     	}
 
-        return "";
+        return new AlmadrabaChartParamsArray();
     }
 }

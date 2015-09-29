@@ -17,8 +17,8 @@ import com.sisifo.almadraba_server.exception.AlmadrabaAuthenticationException;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
 
 import xre.AlmadrabaChart;
-import xre.AlmadrabaChartParameters;
-import xre.AlmadrabaChartParameters.QueryType;
+import xre.AlmadrabaChartParams;
+import xre.AlmadrabaChartParams.QueryType;
 
 @Path("chart")
 public class Chart {
@@ -26,7 +26,7 @@ public class Chart {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     public AlmadrabaChart getUserName(@Context final SecurityContext securityContext,
-    		final AlmadrabaChartParameters params) {
+    		final AlmadrabaChartParams params) {
     	if (securityContext.getUserPrincipal() == null) {
     		throw new AlmadrabaAuthenticationException("body method");
     	}
@@ -37,13 +37,16 @@ public class Chart {
 		int number = params.getNumber();
 		QueryType type = params.getQueryType();
 		
-		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getTopUserSeriesSQL(session, number, "full", null); // "window"
+		// TODO send available simulations in login and back when chart is requested
+		Integer rankExecId = 1;
+		
+		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getTopUserSeriesSQL(session, number, rankExecId, null); // "window"
 		System.out.println(rowsSql.size());
 		
 		session.disconnect();
 		
 		AlmadrabaChart chart = new AlmadrabaChart();
-		DatabaseUtils.addDatabaseRowsToChartSeries(chart, rowsSql);
+		DatabaseUtils.addDatabaseRowsToChartSeries(session, chart, rankExecId, rowsSql);
 
         return chart;
     }

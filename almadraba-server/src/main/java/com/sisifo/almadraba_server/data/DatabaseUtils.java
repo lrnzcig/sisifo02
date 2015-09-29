@@ -20,6 +20,8 @@ import org.hibernate.type.Type;
 
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolutionId;
+import com.sisifo.almadraba_server.hbm.UserPageRankExec;
+import com.sisifo.almadraba_server.hbm.UserPageRankExecStep;
 
 import xre.AlmadrabaChart;
 import xre.AlmadrabaSeries;
@@ -69,14 +71,15 @@ public class DatabaseUtils {
 	 * @return
 	 */
 	public static List<UserPageRankEvolution> getTopUserSeriesSQL(final Session session, final int number, 
-			final String rankExecId, final BigInteger[] additionalIds) {
+			final Integer rankExecId, final BigInteger[] additionalIds) {
 		// TODO this assumes we want users order by full page rank and assuming name of the column also
 		String queryText = "select * from user_page_rank_evolution"
 				+ " where (user_id in (select user_id"
 				+ "	    	from (select user_id as user_id, row_number() over(order by rank desc) as rownumber"
 				+ "	    	from user_page_rank_evolution"
-				+ "	    	where rank_exec_id = 'full'"
-				+ "	    	and rank_step_id = 'rank') as maxrows"
+				// TODO !!!!
+				+ "	    	where (rank_exec_id, step_order) = (select :rank_exec_id, max(step_order) from user_page_rank_evolution)"
+				+ "	    	) as maxrows"
 				+ "	    	where rownumber <= :number)";
 		if (additionalIds != null) {
 			queryText = queryText + "     or user_id in (:list))";
@@ -85,10 +88,10 @@ public class DatabaseUtils {
 		}
 		queryText = queryText 
 				+ "	and rank_exec_id = :rank_exec_id"
-				+ " order by user_id, rank_step_id";
+				+ " order by user_id, step_order";
 		
 		Query q = session.createSQLQuery(queryText)
-				.setString("rank_exec_id", rankExecId)
+				.setInteger("rank_exec_id", rankExecId)
 				.setInteger("number", number);
 		if (additionalIds != null) {
 			q.setParameterList("list", additionalIds);
@@ -101,7 +104,7 @@ public class DatabaseUtils {
 		for (Object[] result : results) {
 			UserPageRankEvolution row = new UserPageRankEvolution();
 			output.add(row);
-			row.setId(new UserPageRankEvolutionId((BigInteger) result[0], (String) result[1], (String) result[2]));
+			row.setId(new UserPageRankEvolutionId((BigInteger) result[0], (Integer) result[1], (Integer) result[2]));
 			double rank = (double) result[3];
 			row.setRank((float) rank);
 		}
@@ -136,25 +139,13 @@ public class DatabaseUtils {
 	}
 
 	
-	public static void addDatabaseRowsToChartSeries(final AlmadrabaChart chart, final List<UserPageRankEvolution> rows) {
+	public static void addDatabaseRowsToChartSeries(final Session session, final AlmadrabaChart chart, final Integer rankExecId,
+			final List<UserPageRankEvolution> rows) {
 		Map<BigInteger, AlmadrabaSeries> mapSeries = new HashMap<BigInteger, AlmadrabaSeries>();
-		BigInteger firstId = null;
 		for (UserPageRankEvolution upre : rows) {
 			BigInteger id = upre.getId().getUserId();
 			if (mapSeries.get(id) == null) {
 				mapSeries.put(id, new AlmadrabaSeries(id));				
-			}
-			
-			if (firstId == null || firstId.equals(id)) {
-				firstId = id;
-				// setup general information for the chart - all users have the same info
-				if (chart.getRankExecId() == null) {
-					chart.setRankExecId(upre.getId().getRankExecId());
-				}
-				if (chart.getStepIds() == null 
-						|| ! Arrays.asList(chart.getStepIds()).contains(upre.getId().getRankStepId())) {
-					chart.addStepIdItem(upre.getId().getRankStepId());
-				}
 			}
 			
 			AlmadrabaSeries series = mapSeries.get(id);
@@ -164,6 +155,28 @@ public class DatabaseUtils {
 		for (BigInteger id : mapSeries.keySet()) {
 			chart.addSeriesItem(mapSeries.get(id));
 		}
+		
+		UserPageRankExec exec = getUserPageRankExec(session, rankExecId);
+		chart.setRankExecLabel(exec.getRankExecLabel());
+		chart.setHourStep(exec.getHourStep());
+		
+		List<UserPageRankExecStep> execSteps = getUserPageRankExecStep(session, rankExecId);
+		for (UserPageRankExecStep execStep : execSteps) {
+			chart.addStepIdItem(execStep.getRankStepLabel());
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static List<UserPageRankExecStep> getUserPageRankExecStep(final Session session, final int rankExecId) {
+		Criteria criteria = session.createCriteria(UserPageRankExecStep.class)
+				.add(Property.forName("rankExecId").eq(rankExecId));
+		return criteria.list();
+	}
+
+	private static UserPageRankExec getUserPageRankExec(final Session session, final int rankExecId) {
+		Criteria criteria = session.createCriteria(UserPageRankExec.class)
+				.add(Property.forName("id").eq(rankExecId));
+		return (UserPageRankExec) criteria.list().get(0);
 	}
 
 }
