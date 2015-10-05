@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.hibernate.Criteria;
 import org.hibernate.Query;
@@ -177,6 +178,35 @@ public class DatabaseUtils {
 		Criteria criteria = session.createCriteria(UserPageRankExec.class)
 				.add(Property.forName("id").eq(rankExecId));
 		return (UserPageRankExec) criteria.list().get(0);
+	}
+
+
+	private static Map<String, UserPageRankExec> executions = new HashMap<String, UserPageRankExec>();
+
+	public static void loadUserPageRankExec(final Session session) {
+		Criteria criteria = session.createCriteria(UserPageRankExec.class);
+		@SuppressWarnings("unchecked")
+		List<UserPageRankExec> upreList = criteria.list();
+		for (UserPageRankExec upre : upreList) {
+			executions.put(upre.getRankExecLabel(), upre);
+		}
+	}
+	
+	public static UserPageRankExec getExecution(final String value) {
+		if (executions.keySet().isEmpty()) {
+			throw new RuntimeException("UserPageRankExec have not been loaded at login");
+		}
+		return executions.get(value);
+	}
+
+	public static String[] getExecutionLabels() {
+		Set<String> set = executions.keySet();
+		String[] output = new String[set.size()];
+		int i = 0;
+		for (String exec : set) {
+			output[i++] = exec;  
+		}
+		return output;
 	}
 
 }

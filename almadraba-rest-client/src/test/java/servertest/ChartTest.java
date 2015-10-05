@@ -23,6 +23,13 @@ public class ChartTest {
 		AlmadrabaChartParams params = new AlmadrabaChartParams();
 		params.setQueryType(QueryType.TOP);
 		params.setNumber(5);
+		params.setExecutionLabel("full");
+
+		Response responseLogin = client.target("http://localhost:8080/almadraba/webapi").path("login").request()
+				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
+				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_PASSWORD, "pass")
+				.get();
+		Assert.assertEquals(200, responseLogin.getStatus());
 
 		Response response = client.target("http://localhost:8080/almadraba/webapi").path("chart").request()
 				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
@@ -33,4 +40,5 @@ public class ChartTest {
 		System.out.println(chart.getSeries().length);
 		System.out.println(chart.getStepIds().length);		
 	}
+
 }

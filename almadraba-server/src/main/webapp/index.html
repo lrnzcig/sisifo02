@@ -96,6 +96,10 @@
                       </div>
                       <div class="ibox-content">
 
+                          <h5>Execution</h5>
+                          <select id="select-execution" data-placeholder="Choose execution label..." class="chosen-select" style="width:350px;" tabindex="2">
+                            <option value="">Select</option>
+                          </select>
                           <h5>Type of query</h5>
                           <select id="select-type-of-query" data-placeholder="Choose query type..." class="chosen-select" style="width:350px;" tabindex="2">
                             <option value="">Select</option>
@@ -215,9 +219,30 @@
 
         // Combo controller (TODO)
         var type_of_query = null;
-        var selected_type_of_query_controller = function () {
-          type_of_query = this.options[select.selectedIndex].text;
-        }
+        var execution_label = null;
+        var selected_execution_label_controller = function() {
+          execution_label = this.options[this.selectedIndex].text;
+        };
+
+        // add elements to combo, update and add controller
+        var init_combo = function(combo_id, array) {
+          select = document.getElementById(combo_id);
+
+          var arrayLength = array.length;
+          var lastValue;
+          for (var i=0; i < arrayLength; i++) {
+            opt = document.createElement("option");
+            opt.value = array[i];
+            opt.text = array[i];
+            select.appendChild(opt);
+            lastValue = array[i];
+          }
+          $(select).val(lastValue);
+          $(select).trigger("chosen:updated");
+
+          return select;
+        };
+
 
         // Login button controller
         $('#log-in').click(function(){
@@ -248,20 +273,13 @@
               }
             },
             success: function(data, textStatus, jqXHR) {
-              select = document.getElementById("select-type-of-query");
+              var select = init_combo("select-type-of-query", data.queryTypes);
+              // TODO add controller for the combo
 
-              // add elements to select
-              var arrayLength = data.queryTypes.length;
-              for (var i=0; i < arrayLength; i++) {
-                opt = document.createElement("option");
-                opt.value = data.queryTypes[i];
-                opt.text = data.queryTypes[i];
-                select.appendChild(opt);
-              }
-              $(select).trigger("chosen:updated");
+              var select = init_combo("select-execution", data.executionLabels);
 
               // add controller for the combo
-              $(select).chosen().change(selected_type_of_query_controller);
+              $(select).chosen().change(selected_execution_label_controller);
 
               document.getElementById("log-in-collapse").click();
               document.getElementById("submit-form-collapse").click();
@@ -275,7 +293,8 @@
           number_of_users = document.getElementById('number-of-users').value
           input_data = {
             "number" : number_of_users,
-            "queryType":  type_of_query
+            "queryType":  type_of_query,
+            "executionLabel": execution_label
           }
           return input_data;
         }

@@ -20,7 +20,7 @@ public class AlmadrabaChartParams {
 		}
 		
 		@JsonCreator
-		public static QueryType forValue(String value) {
+		public static QueryType forValue(final String value) {
 			return namesMap.get(value);
 		}
 		
@@ -36,6 +36,7 @@ public class AlmadrabaChartParams {
 	}
 	
 	private QueryType queryType;
+	private String executionLabel;
 	private int number;
 	
 	public AlmadrabaChartParams() {
@@ -46,7 +47,7 @@ public class AlmadrabaChartParams {
 		return queryType;
 	}
 
-	public void setQueryType(QueryType queryType) {
+	public void setQueryType(final QueryType queryType) {
 		this.queryType = queryType;
 	}
 
@@ -54,8 +55,16 @@ public class AlmadrabaChartParams {
 		return number;
 	}
 
-	public void setNumber(int number) {
+	public void setNumber(final int number) {
 		this.number = number;
+	}
+
+	public String getExecutionLabel() {
+		return executionLabel;
+	}
+
+	public void setExecutionLabel(final String executionLabel) {
+		this.executionLabel = executionLabel;
 	}
 	
 	

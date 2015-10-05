@@ -1,23 +1,27 @@
-package xre;
+package com.sisifo.almadraba_server.data;
 
 import java.util.Arrays;
 
 import xre.AlmadrabaChartParams.QueryType;
+import xre.IAlmadrabaParamsArray;
 
-public class AlmadrabaChartParamsArray {
+public class AlmadrabaParamsArray implements IAlmadrabaParamsArray {
 	private QueryType[] queryTypes;
+	private String[] executionLabels;
 
-	public AlmadrabaChartParamsArray() {
+	public AlmadrabaParamsArray() {
 		super();
 		for (QueryType e: QueryType.values()) {
 			addQueryType(e);
 		}
 	}
 
+	@Override
 	public QueryType[] getQueryTypes() {
 		return queryTypes;
 	}
 
+	@Override
 	public void setQueryTypes(final QueryType[] queryTypes) {
 		this.queryTypes = queryTypes;
 	}
@@ -30,6 +34,16 @@ public class AlmadrabaChartParamsArray {
 			this.queryTypes = Arrays.copyOf(this.queryTypes, newLength);
 		}
 		this.queryTypes[this.queryTypes.length - 1] = item;		
+	}
+
+	@Override
+	public String[] getExecutionLabels() {
+		return executionLabels;
+	}
+
+	@Override
+	public void setExecutionLabels(final String[] executionLabels) {
+		this.executionLabels = executionLabels;
 	}
 
 	
