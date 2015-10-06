@@ -9,7 +9,7 @@ define("controllers/combo_controller",
             this.combo_id = pid;
             this.el = document.getElementById(this.combo_id);
             // add controller for the combo
-            //$(this.el).chosen().change(this);
+            $(this.el).chosen().change(this.triggerAction);
           }
           ComboController.prototype.initData = function(data) {
             var arrayLength = data.length;
@@ -27,7 +27,7 @@ define("controllers/combo_controller",
           ComboController.prototype.getValue = function() {
             return this.el.options[this.el.selectedIndex].text;
           }
-          ComboController.prototype.onClick = function() {
+          ComboController.prototype.triggerAction = function() {
             return;
           }
 

@@ -13,9 +13,9 @@ define("main",
     // inspinia_loader loads all dependencies for inspinia template in 1 step, from require.config below
     // controllers do not need dependencies - they don't execute until document is ready
     // chart_controller is a singleton and it is not in the factory
-	["inspinia_loader_level1", "controllers/chart_controller", "controllers/factory"],
+	["inspinia_loader_level1", "controllers/chart_controller", "controllers/factory", "ajax/login", "ajax/submit_data"],
 
-	function (inspinia_loader, chart_controller, factory) {
+	function (inspinia_loader, chart_controller, factory, ajax_login, ajax_submit_data) {
     // chosen init
     $(document).ready(function () {
       var config = {
@@ -146,46 +146,32 @@ define("main",
       selected_type_of_query_controller.init("select-type-of-query");
 
       // Login button controller
-      $('#log-in').click(function(){
-        auth = btoa(document.getElementById('username').value + ':' + document.getElementById('password').value);
-        $.ajax({
-          url: 'http://localhost:8080/almadraba/webapi/login',
-          type: 'GET',
-          headers: {
-            "Authorization": 'Basic ' + auth
-            //"Origin": "http://www.sisifo.com",
-            //"Access-Control-Request-Method" : "GET",
-            //"Access-Control-Request-Headers" : "Authorization"
-          },
-          complete: function(e, xhr, settings){
-            if (e.status == 200) {
-            } else if (e.status === 401){
-              var element = document.getElementById("log-in-message");
-              element.innerHTML = "<p>Wrong user id or password</p>";
-              element.style.backgroundColor = 'yellow'
-            } else if (e.status === 500){
-              var element = document.getElementById("log-in-message");
-              element.innerHTML = "<p>Fatal error in server</p>";
-              element.style.backgroundColor = "rgb(200, 0, 20)"
-            } else {
-              var element = document.getElementById("log-in-message");
-              element.innerHTML = "<p>Unexpected fatal error. Is server up?</p>";
-              element.style.backgroundColor = "rgb(200, 0, 20)"
-            }
-          },
-          success: function(data, textStatus, jqXHR) {
-            selected_type_of_query_controller.initData(data.queryTypes);
-            selected_execution_label_controller.initData(data.executionLabels);
+      ajax_login.setActionFunction(function(data) {
+        selected_type_of_query_controller.initData(data.queryTypes);
+        selected_execution_label_controller.initData(data.executionLabels);
 
-            document.getElementById("log-in-collapse").click();
-            document.getElementById("submit-form-collapse").click();
-
-          }
-        });
+        document.getElementById("log-in-collapse").click();
+        document.getElementById("submit-form-collapse").click();
       });
+      $('#log-in').click(ajax_login.onClick);
 
-      // utility for getting input from form
-      var get_input_data = function () {
+      // Submit data controller
+      ajax_submit_data.setActionFunction(function(data) {
+        var chart = chart_controller.getChartInstance();
+        if (data.series) {
+          if (is_chart_collapsed()) {
+            chart_collapse.click();
+          }
+          chart.set_series(data.series);
+          chart.set_xaxis(data.stepIds);
+          chart_view_update();
+          document.getElementById("chart").focus()
+        } else {
+          console.log("Error in response from server. No data.series")
+        }
+      });
+      ajax_submit_data.setGetInputDataFunction(function() {
+        // utility for getting input from form
         number_of_users = document.getElementById('number-of-users').value
         input_data = {
           "number" : number_of_users,
@@ -193,53 +179,8 @@ define("main",
           "executionLabel": selected_execution_label_controller.getValue()
         }
         return input_data;
-      }
-
-      // Submit data controller
-      $('#submit-data').click(function(){
-        $.ajax({
-          url: 'http://localhost:8080/almadraba/webapi/chart',
-          type: 'PUT',
-          data: JSON.stringify(get_input_data()),
-          contentType: 'application/json',
-          headers: {
-            "Authorization": 'Basic ' + auth
-            //"Origin": "http://www.sisifo.com",
-            //"Access-Control-Request-Method" : "PUT",
-            //"Access-Control-Request-Headers" : "Authorization"
-          },
-          complete: function(e, xhr, settings){
-            if (e.status == 200) {
-            } else if (e.status === 401){
-              var element = document.getElementById("log-in-message");
-              element.innerHTML = "<p>Wrong user id or password</p>";
-              element.style.backgroundColor = 'yellow'
-            } else if (e.status === 500){
-              var element = document.getElementById("log-in-message");
-              element.innerHTML = "<p>Fatal error in server</p>";
-              element.style.backgroundColor = "rgb(200, 0, 20)"
-            } else {
-              var element = document.getElementById("log-in-message");
-              element.innerHTML = "<p>Unexpected fatal error. Is server up?</p>";
-              element.style.backgroundColor = "rgb(200, 0, 20)"
-            }
-          },
-          success: function(data, textStatus, jqXHR) {
-            var chart = chart_controller.getChartInstance();
-            if (data.series) {
-              if (is_chart_collapsed()) {
-                chart_collapse.click();
-              }
-              chart.set_series(data.series);
-              chart.set_xaxis(data.stepIds);
-              chart_view_update();
-              document.getElementById("chart").focus()
-            } else {
-              console.log("Error in response from server. No data.series")
-            }
-          }
-        });
       });
+      $('#submit-data').click(ajax_submit_data.onClick);
 
     });
 

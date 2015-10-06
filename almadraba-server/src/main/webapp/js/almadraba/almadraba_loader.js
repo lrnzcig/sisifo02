@@ -1,7 +1,9 @@
 define("almadraba_loader",
 
 ["controllers/chart_controller",
-	"controllers/factory"
+	"controllers/factory",
+	"ajax/login",
+	"ajax/submit_data"
 ]
 
 )
