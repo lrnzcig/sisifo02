@@ -73,13 +73,12 @@ public class DatabaseUtils {
 	 */
 	public static List<UserPageRankEvolution> getTopUserSeriesSQL(final Session session, final int number, 
 			final Integer rankExecId, final BigInteger[] additionalIds) {
-		// TODO this assumes we want users order by full page rank and assuming name of the column also
 		String queryText = "select * from user_page_rank_evolution"
 				+ " where (user_id in (select user_id"
 				+ "	    	from (select user_id as user_id, row_number() over(order by rank desc) as rownumber"
 				+ "	    	from user_page_rank_evolution"
-				// TODO !!!!
-				+ "	    	where (rank_exec_id, step_order) = (select :rank_exec_id, max(step_order) from user_page_rank_evolution)"
+				+ "	    	where (rank_exec_id, step_order) = "
+				+ "             (select :rank_exec_id, max(step_order) from user_page_rank_evolution where rank_exec_id = :rank_exec_id)"
 				+ "	    	) as maxrows"
 				+ "	    	where rownumber <= :number)";
 		if (additionalIds != null) {
