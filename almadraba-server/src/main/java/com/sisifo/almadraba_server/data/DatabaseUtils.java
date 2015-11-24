@@ -104,7 +104,7 @@ public class DatabaseUtils {
 		int min_number = 0;
 		if (lastIdRowNumber != null) {
 			min_number = lastIdRowNumber + 1;
-			max_number = max_number + number;
+			max_number = min_number + number - 1;
 		}
 		
 		// 3. setting query variables

@@ -13,7 +13,7 @@ define("main",
     // inspinia_loader loads all dependencies for inspinia template in 1 step, from require.config below
     // controllers do not need dependencies - they don't execute until document is ready
     // chart_controller is a singleton and it is not in the factory
-	["inspinia_loader_level1", "controllers/chart_controller", "controllers/factory", "ajax/login", "ajax/submit_data"],
+	["inspinia_loader", "controllers/chart_controller", "controllers/factory", "ajax/login", "ajax/submit_data"],
 
 	function (inspinia_loader, chart_controller, factory, ajax_login, ajax_submit_data) {
     // chosen init
@@ -170,13 +170,25 @@ define("main",
           console.log("Error in response from server. No data.series")
         }
       });
+			var get_non_pinned_users = (function() {
+				var chart = chart_controller.getChartInstance();
+        if (chart.series) {
+					var arrayLength = chart.series.length;
+					var output = [];
+	        for (var i=0; i < arrayLength; i++) {
+						output[i] = chart.series[i].name;
+					}
+					return output;
+				}
+			});
       ajax_submit_data.setGetInputDataFunction(function() {
         // utility for getting input from form
         number_of_users = document.getElementById('number-of-users').value
         input_data = {
           "number" : number_of_users,
           "queryType":  selected_type_of_query_controller.getValue(),
-          "executionLabel": selected_execution_label_controller.getValue()
+          "executionLabel": selected_execution_label_controller.getValue(),
+					"nonPinnedUsers": get_non_pinned_users()
         }
         return input_data;
       });
@@ -203,5 +215,40 @@ require.config({
       highchartsexporting: "../highcharts/exporting",
       // here the custom controllers for this application
       custompageloader: "almadraba_loader"
-    }
+    },
+		shim: {
+    	highcharts: {
+      	exports: "Highcharts",
+      	deps: ["jquery"]
+			},
+			highchartsmore: {
+				exports: "Highcharts",
+      	deps: ["jquery", "highcharts"]
+    	},
+			highchartsexporting: {
+				exports: "Highcharts",
+      	deps: ["jquery", "highcharts"]
+    	},
+			bootstrap: {
+				deps: ["jquery"]
+			},
+			jquerymetismenu: {
+				deps: ["jquery"]
+			},
+			jqueryslimscroll: {
+				deps: ["jquery"]
+			},
+			inspinia: {
+				deps: ["jquery"]
+			},
+			pace: {
+				deps: ["jquery"]
+			},
+			chosen: {
+				deps: ["jquery"]
+			},
+			icheck: {
+				deps: ["jquery"]
+			}
+  	}
 });

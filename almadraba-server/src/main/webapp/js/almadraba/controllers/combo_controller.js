@@ -21,7 +21,8 @@ define("controllers/combo_controller",
               this.el.appendChild(opt);
               lastValue = data[i];
             }
-            $(this.el).val(lastValue);
+            // TODO to set or not to set default value
+            //$(this.el).val(lastValue);
             $(this.el).trigger("chosen:updated");
           }
           ComboController.prototype.getValue = function() {
