@@ -19,6 +19,7 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
 
+import com.sisifo.almadraba_server.exception.AlmadrabaCodingErrorException;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolutionId;
 import com.sisifo.almadraba_server.hbm.UserPageRankExec;
@@ -30,6 +31,7 @@ import xre.AlmadrabaSeries;
 public class DatabaseUtils {
 
 	@SuppressWarnings("unchecked")
+	@Deprecated
 	public static List<UserPageRankEvolution> getTopUserSeries(final Session session, final int number, final BigInteger[] additionalUserIds) {
 		// 1st select the users as a subquery	
 		ProjectionList pl = Projections.projectionList()
@@ -65,22 +67,29 @@ public class DatabaseUtils {
 
 	/**
 	 * Execute query directly in SQL
+	 * Max means that the user order is solved using the maximum step_order in the page rank evolution
+	 * TODO
+	 * TODO does this make sense???
+	 * TODO
 	 * 
 	 * @param session
 	 * @param number
 	 * @param additionalIds e.g. new BigInteger[] {BigInteger.valueOf(38643994)}
 	 * @return
 	 */
-	public static List<UserPageRankEvolution> getTopUserSeriesSQL(final Session session, final int number, 
+	public static List<UserPageRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, final Integer lastIdRowNumber,
 			final Integer rankExecId, final BigInteger[] additionalIds) {
+		// 1. composing query
 		String queryText = "select * from user_page_rank_evolution"
 				+ " where (user_id in (select user_id"
-				+ "	    	from (select user_id as user_id, row_number() over(order by rank desc) as rownumber"
-				+ "	    	from user_page_rank_evolution"
-				+ "	    	where (rank_exec_id, step_order) = "
-				+ "             (select :rank_exec_id, max(step_order) from user_page_rank_evolution where rank_exec_id = :rank_exec_id)"
+				+ "	    	from ("
+				+ getPageRankEvolutionMaxOrder()
 				+ "	    	) as maxrows"
-				+ "	    	where rownumber <= :number)";
+				+ "	    	where rownumber <= :max_number";
+		if (lastIdRowNumber != null) {
+			queryText += " and rownumber >= :min_number";
+		}
+		queryText += ")";
 		if (additionalIds != null) {
 			queryText = queryText + "     or user_id in (:list))";
 		} else {
@@ -90,15 +99,27 @@ public class DatabaseUtils {
 				+ "	and rank_exec_id = :rank_exec_id"
 				+ " order by user_id, step_order";
 		
+		// 2. calculating min and max orders
+		int max_number = number;
+		int min_number = 0;
+		if (lastIdRowNumber != null) {
+			min_number = lastIdRowNumber + 1;
+			max_number = max_number + number;
+		}
+		
+		// 3. setting query variables
 		Query q = session.createSQLQuery(queryText)
 				.setInteger("rank_exec_id", rankExecId)
-				.setInteger("number", number);
+				.setInteger("max_number", max_number);
+		if (lastIdRowNumber != null) {
+			q.setInteger("min_number", min_number);
+		}
 		if (additionalIds != null) {
 			q.setParameterList("list", additionalIds);
 		}
 		
+		// 4. launching query and output
 		List<UserPageRankEvolution> output = new ArrayList<UserPageRankEvolution>();
-		
 		@SuppressWarnings("unchecked")
 		List<Object[]> results = q.list(); 
 		for (Object[] result : results) {
@@ -111,6 +132,55 @@ public class DatabaseUtils {
 		
 		return output;
 	}
+	
+	/**
+	 * Max means that the user order is solved using the maximum step_order in the page rank evolution
+	 * TODO
+	 * TODO does this make sense???
+	 * TODO
+	 * 
+	 * @return
+	 */
+	private static String getPageRankEvolutionMaxOrder() {
+		return "select user_id as user_id, row_number() over(order by rank desc) as rownumber"
+				+ "	    	from user_page_rank_evolution"
+				+ "	    	where (rank_exec_id, step_order) = "
+				+ "             (select :rank_exec_id, max(step_order) from user_page_rank_evolution where rank_exec_id = :rank_exec_id)";
+	}
+
+	/**
+	 * Max means that the user order is solved using the maximum step_order in the page rank evolution
+	 * TODO
+	 * TODO does this make sense???
+	 * TODO
+	 * 
+	 * @param session
+	 * @param number
+	 * @param rankExecId
+	 * @param pinnedUsers
+	 * @return
+	 */
+	public static List<UserPageRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, 
+			final Integer rankExecId, final BigInteger[] pinnedUsers) {
+		return getMaxUserSeriesSQL(session, number, null, rankExecId, pinnedUsers);
+	}
+
+
+	public static int getRowNumberForUserSQL(final Session session, final BigInteger lastUserId, final int rankExecId) {
+		String queryText = "select * from (" +getPageRankEvolutionMaxOrder() + ") as maxrows where user_id = :user_id";
+		Query q = session.createSQLQuery(queryText)
+				.setInteger("rank_exec_id", rankExecId)
+				.setBigInteger("user_id", lastUserId);
+
+		@SuppressWarnings("unchecked")
+		List<Object[]> results = q.list(); 
+		for (Object[] result : results) {
+			return ((BigInteger)result[1]).intValue();
+		}
+
+		throw new AlmadrabaCodingErrorException("Can't find user_id=" + lastUserId);
+	}
+
 
 	/**
 	 * Returns a query. To paginate over it do something like
@@ -121,6 +191,7 @@ public class DatabaseUtils {
 	 * @param number
 	 * @return
 	 */
+	@Deprecated
 	public static Criteria getTopUserSeriesPaginate(final Session session, final int number) {
 		ProjectionList pl = Projections.projectionList()
 				.add(Projections.property("id.userId"));

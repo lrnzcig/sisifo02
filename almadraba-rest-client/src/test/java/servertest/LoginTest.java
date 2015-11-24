@@ -7,6 +7,7 @@ import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.junit.Assert;
 import org.junit.Test;
 
+import almadraba_rest_client.data.AlmadrabaParamsArray;
 import almadraba_rest_client.utils.ClientUtils;
 import xre.IAlmadrabaParamsArray;
 
@@ -21,7 +22,7 @@ public class LoginTest {
 				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_PASSWORD, "pass")
 				.get();
 		Assert.assertEquals(200, response.getStatus());
-		IAlmadrabaParamsArray pa = response.readEntity(IAlmadrabaParamsArray.class);
+		IAlmadrabaParamsArray pa = response.readEntity(AlmadrabaParamsArray.class);
 		System.out.println(pa.getQueryTypes().length);
 		System.out.println(pa.getExecutionLabels().length);
 	}

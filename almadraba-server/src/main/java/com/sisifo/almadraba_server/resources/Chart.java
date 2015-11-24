@@ -1,5 +1,6 @@
 package com.sisifo.almadraba_server.resources;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import javax.ws.rs.PUT;
@@ -47,7 +48,14 @@ public class Chart {
 			rankExecId = DatabaseUtils.getExecution(DatabaseUtils.getExecutionLabels()[0]).getId();
 		}
 		
-		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getTopUserSeriesSQL(session, number, rankExecId, null);
+		List<UserPageRankEvolution> rowsSql;
+		
+		if (QueryType.TOP.equals(type)) {
+			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, rankExecId, params.getPinnedUsers());
+		} else {
+			int lastIdRowNumber = getMinUserId(session, params.getNonPinnedUsers(), rankExecId);
+			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, lastIdRowNumber, rankExecId, params.getPinnedUsers());
+		}
 		System.out.println(rowsSql.size());
 		
 		session.disconnect();
@@ -57,4 +65,15 @@ public class Chart {
 
         return chart;
     }
+
+	private int getMinUserId(final Session session, final BigInteger[] nonPinnedUsers, final Integer rankExecId) {
+		int result = 0;
+		for (BigInteger id : nonPinnedUsers) {
+			int candidate = DatabaseUtils.getRowNumberForUserSQL(session, id, rankExecId);
+			if (candidate > result) {
+				result = candidate;
+			}
+		}
+		return result;
+	}
 }

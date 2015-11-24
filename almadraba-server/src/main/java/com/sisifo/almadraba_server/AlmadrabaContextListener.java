@@ -10,6 +10,7 @@ import com.sisifo.almadraba_server.hbm.HibernateUtil;
 public class AlmadrabaContextListener implements ServletContextListener {
 	
 	// TODO put this as a startup argument?
+	// TODO does this work?
 	private static boolean errorIfNotConnected = true;
 	private static SessionFactory factory;
 
