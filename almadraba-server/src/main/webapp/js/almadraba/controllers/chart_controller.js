@@ -5,6 +5,8 @@ define("controllers/chart_controller",
         function ($) {
 
           // chart manager as a singleton
+          // NOTE: it manages only the data of the graph
+          // updating of graph must be done by main class
           var ChartSingleton = (function () {
 
             var instance;
@@ -15,9 +17,6 @@ define("controllers/chart_controller",
                 // public methods and variables
                 series: null,
                 xaxis: null,
-                update: function () {
-                  chart_update();
-                },
                 set_series: function(series) {
                   this.series = [];
                   var arrayLength = series.length;

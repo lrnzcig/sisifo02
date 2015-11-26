@@ -90,7 +90,7 @@ public class DatabaseUtils {
 			queryText += " and rownumber >= :min_number";
 		}
 		queryText += ")";
-		if (additionalIds != null) {
+		if (additionalIds != null && additionalIds.length > 0) {
 			queryText = queryText + "     or user_id in (:list))";
 		} else {
 			queryText = queryText + ")";
@@ -114,7 +114,7 @@ public class DatabaseUtils {
 		if (lastIdRowNumber != null) {
 			q.setInteger("min_number", min_number);
 		}
-		if (additionalIds != null) {
+		if (additionalIds != null && additionalIds.length > 0) {
 			q.setParameterList("list", additionalIds);
 		}
 		

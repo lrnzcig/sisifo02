@@ -112,7 +112,10 @@ define("main",
                                       .attr({
                                           text: 'x: ' + this.x + ', y: ' + this.y
                                       });
-                              }
+                              },
+															click: function () {
+																toggle_pinned_users(this.series.name);
+															}
                           }
                       },
                       events: {
@@ -170,17 +173,6 @@ define("main",
           console.log("Error in response from server. No data.series")
         }
       });
-			var get_non_pinned_users = (function() {
-				var chart = chart_controller.getChartInstance();
-        if (chart.series) {
-					var arrayLength = chart.series.length;
-					var output = [];
-	        for (var i=0; i < arrayLength; i++) {
-						output[i] = chart.series[i].name;
-					}
-					return output;
-				}
-			});
       ajax_submit_data.setGetInputDataFunction(function() {
         // utility for getting input from form
         number_of_users = document.getElementById('number-of-users').value
@@ -188,11 +180,60 @@ define("main",
           "number" : number_of_users,
           "queryType":  selected_type_of_query_controller.getValue(),
           "executionLabel": selected_execution_label_controller.getValue(),
+					"pinnedUsers": get_pinned_users(),
 					"nonPinnedUsers": get_non_pinned_users()
         }
         return input_data;
       });
       $('#submit-data').click(ajax_submit_data.onClick);
+
+			// gets list of pinned users
+			// (used by submit-data)
+			var pinned_users = [];
+			var get_pinned_users = (function() {
+				return pinned_users;
+			});
+			// when a user is clicked, it is either added or removed to the list of pinned users
+			// (event on the graph)
+			var toggle_pinned_users = (function(user) {
+				var arrayLength = pinned_users.length;
+				var index = get_pinned_user_index(user);
+				if (index == -1) {
+					pinned_users[arrayLength] = user;
+					return;
+				}
+				pinned_users.splice(index, 1);
+			});
+			var get_pinned_user_index = (function(user) {
+				var arrayLength = pinned_users.length;
+				for (var i=0; i < arrayLength; i++) {
+					if (user == pinned_users[i]) {
+						return i;
+					}
+				}
+				return -1;
+			})
+			// gets all users in the current graph except the ones that have been pinned
+			// (used by submit-data)
+			var get_non_pinned_users = (function() {
+				var chart = chart_controller.getChartInstance();
+        if (chart.series) {
+					var arrayLength = chart.series.length;
+					var output = [];
+					// first add all users in the graph
+	        for (var i=0; i < arrayLength; i++) {
+						output[i] = chart.series[i].name;
+					}
+					// now remove pinned users
+					for (var i=0; i < arrayLength; i++) {
+						var index = get_pinned_user_index(chart.series[i].name);
+						if (index >= 0) {
+							output.splice(index, 1);
+						}
+					}
+					return output;
+				}
+			});
 
     });
 
