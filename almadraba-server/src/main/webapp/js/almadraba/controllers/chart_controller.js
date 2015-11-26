@@ -19,6 +19,9 @@ define("controllers/chart_controller",
                 xaxis: null,
                 set_series: function(series) {
                   this.series = [];
+                  series.sort(function (a,b) {
+                    return a.rowNumber - b.rowNumber;
+                  });
                   var arrayLength = series.length;
                   for (var i=0; i < arrayLength; i++) {
                     obj = {

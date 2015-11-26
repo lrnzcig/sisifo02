@@ -80,24 +80,9 @@ public class DatabaseUtils {
 	public static List<UserPageRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, final Integer lastIdRowNumber,
 			final Integer rankExecId, final BigInteger[] additionalIds) {
 		// 1. composing query
-		String queryText = "select * from user_page_rank_evolution"
-				+ " where (user_id in (select user_id"
-				+ "	    	from ("
-				+ getPageRankEvolutionMaxOrder()
-				+ "	    	) as maxrows"
-				+ "	    	where rownumber <= :max_number";
-		if (lastIdRowNumber != null) {
-			queryText += " and rownumber >= :min_number";
-		}
-		queryText += ")";
-		if (additionalIds != null && additionalIds.length > 0) {
-			queryText = queryText + "     or user_id in (:list))";
-		} else {
-			queryText = queryText + ")";
-		}
-		queryText = queryText 
-				+ "	and rank_exec_id = :rank_exec_id"
-				+ " order by user_id, step_order";
+		boolean minRowNumberPresent = lastIdRowNumber != null;
+		boolean additionalIdsPresent = additionalIds != null && additionalIds.length > 0; 
+		String queryText = getPageRankEvolutionOrderedForRangeQuery(minRowNumberPresent, additionalIdsPresent);
 		
 		// 2. calculating min and max orders
 		int max_number = number;
@@ -111,10 +96,10 @@ public class DatabaseUtils {
 		Query q = session.createSQLQuery(queryText)
 				.setInteger("rank_exec_id", rankExecId)
 				.setInteger("max_number", max_number);
-		if (lastIdRowNumber != null) {
+		if (minRowNumberPresent) {
 			q.setInteger("min_number", min_number);
 		}
-		if (additionalIds != null && additionalIds.length > 0) {
+		if (additionalIdsPresent) {
 			q.setParameterList("list", additionalIds);
 		}
 		
@@ -128,6 +113,7 @@ public class DatabaseUtils {
 			row.setId(new UserPageRankEvolutionId((BigInteger) result[0], (Integer) result[1], (Integer) result[2]));
 			double rank = (double) result[3];
 			row.setRank((float) rank);
+			row.setRowNumber((BigInteger) result[4]);
 		}
 		
 		return output;
@@ -141,11 +127,35 @@ public class DatabaseUtils {
 	 * 
 	 * @return
 	 */
-	private static String getPageRankEvolutionMaxOrder() {
+	private static String getPageRankEvolutionMaxOrderQuery() {
 		return "select user_id as user_id, row_number() over(order by rank desc) as rownumber"
 				+ "	    	from user_page_rank_evolution"
 				+ "	    	where (rank_exec_id, step_order) = "
 				+ "             (select :rank_exec_id, max(step_order) from user_page_rank_evolution where rank_exec_id = :rank_exec_id)";
+	}
+	
+	private static String getPageRankEvolutionMaxOrderRangeQuery(final boolean minRowNumberPresent, final boolean additionalIdsPresent) {
+		String queryText = "select user_id, rownumber from ("
+							+ getPageRankEvolutionMaxOrderQuery()
+							+ ") as maxrows "
+							+ "where (rownumber <= :max_number";
+		if (minRowNumberPresent) {
+			queryText += " and rownumber >= :min_number";
+		}
+		queryText += ")";
+		if (additionalIdsPresent) {
+			queryText = queryText + "or user_id in (:list)";			
+		}
+		return queryText;
+	}
+	
+	private static String getPageRankEvolutionOrderedForRangeQuery(final boolean minRowNumberPresent, final boolean additionalIdsPresent) {
+		return "select upre.*, user_rownumber.rownumber "
+				+ "from user_page_rank_evolution as upre, (" + getPageRankEvolutionMaxOrderRangeQuery(minRowNumberPresent, additionalIdsPresent) 
+														+ ") as user_rownumber "
+				+ "where user_rownumber.user_id = upre.user_id "
+				+ "and rank_exec_id = :rank_exec_id "
+				+ "order by user_rownumber.rownumber, step_order";
 	}
 
 	/**
@@ -167,7 +177,7 @@ public class DatabaseUtils {
 
 
 	public static int getRowNumberForUserSQL(final Session session, final BigInteger lastUserId, final int rankExecId) {
-		String queryText = "select * from (" +getPageRankEvolutionMaxOrder() + ") as maxrows where user_id = :user_id";
+		String queryText = "select * from (" +getPageRankEvolutionMaxOrderQuery() + ") as maxrows where user_id = :user_id";
 		Query q = session.createSQLQuery(queryText)
 				.setInteger("rank_exec_id", rankExecId)
 				.setBigInteger("user_id", lastUserId);
@@ -216,11 +226,12 @@ public class DatabaseUtils {
 		for (UserPageRankEvolution upre : rows) {
 			BigInteger id = upre.getId().getUserId();
 			if (mapSeries.get(id) == null) {
-				mapSeries.put(id, new AlmadrabaSeries(id));				
+				mapSeries.put(id, new AlmadrabaSeries(id));
 			}
 			
 			AlmadrabaSeries series = mapSeries.get(id);
 			series.addItemToSeries(upre.getRank());
+			series.setRowNumber(upre.getRowNumber());
 		}
 		
 		for (BigInteger id : mapSeries.keySet()) {

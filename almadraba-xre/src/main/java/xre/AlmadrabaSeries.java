@@ -7,6 +7,7 @@ public class AlmadrabaSeries {
 	
 	private BigInteger userId;
 	private Float[] series;
+	private BigInteger rowNumber;
 	
 	public AlmadrabaSeries() {
 		super();
@@ -49,5 +50,12 @@ public class AlmadrabaSeries {
 		this.series[this.series.length - 1] = item;		
 	}
 
-	
+	public BigInteger getRowNumber() {
+		return rowNumber;
+	}
+
+	public void setRowNumber(final BigInteger rowNumber) {
+		this.rowNumber = rowNumber;
+	}
+
 }

@@ -1,5 +1,7 @@
 package com.sisifo.almadraba_server.hbm;
 
+import java.math.BigInteger;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -11,6 +13,10 @@ public class UserPageRankEvolution {
 	@Id
 	private UserPageRankEvolutionId id;
 	private Float rank;
+	
+	// following field comes from the ordered join; if the object is informed by hibernate it will fail
+	// this gives the rank ordering to the GUI
+	private BigInteger rowNumber;
 	
 	public UserPageRankEvolution() {
 		super();
@@ -36,6 +42,14 @@ public class UserPageRankEvolution {
 
 	public void setRank(final Float rank) {
 		this.rank = rank;
+	}
+
+	public BigInteger getRowNumber() {
+		return rowNumber;
+	}
+
+	public void setRowNumber(final BigInteger rowNumber) {
+		this.rowNumber = rowNumber;
 	}
 
 }

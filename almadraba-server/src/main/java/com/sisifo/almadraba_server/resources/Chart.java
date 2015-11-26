@@ -56,7 +56,6 @@ public class Chart {
 			int lastIdRowNumber = getMinUserId(session, params.getNonPinnedUsers(), rankExecId);
 			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, lastIdRowNumber, rankExecId, params.getPinnedUsers());
 		}
-		System.out.println(rowsSql.size());
 		
 		session.disconnect();
 		

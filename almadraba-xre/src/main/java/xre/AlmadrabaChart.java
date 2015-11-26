@@ -1,5 +1,6 @@
 package xre;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 
 public class AlmadrabaChart {
@@ -82,6 +83,13 @@ public class AlmadrabaChart {
 		this.hourStep = hourStep;
 	}
 	
-	
+	public AlmadrabaSeries getSeries(final BigInteger order) {
+		for (AlmadrabaSeries s : series) {
+			if (s.getRowNumber() == order) {
+				return s;
+			}
+		}
+		return null;
+	}
 
 }
