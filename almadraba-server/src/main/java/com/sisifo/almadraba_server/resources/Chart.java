@@ -53,7 +53,10 @@ public class Chart {
 		if (QueryType.TOP.equals(type)) {
 			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, rankExecId, params.getPinnedUsers());
 		} else {
-			int lastIdRowNumber = getMinUserId(session, params.getNonPinnedUsers(), rankExecId);
+			Integer lastIdRowNumber = null;
+			if (params.getNonPinnedUsers() != null && params.getNonPinnedUsers().length > 0) {
+				lastIdRowNumber = getMinUserId(session, params.getNonPinnedUsers(), rankExecId);
+			}
 			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, lastIdRowNumber, rankExecId, params.getPinnedUsers());
 		}
 		
@@ -67,8 +70,10 @@ public class Chart {
 
 	private int getMinUserId(final Session session, final BigInteger[] nonPinnedUsers, final Integer rankExecId) {
 		int result = 0;
-		for (BigInteger id : nonPinnedUsers) {
-			int candidate = DatabaseUtils.getRowNumberForUserSQL(session, id, rankExecId);
+		// get just the rows for the nonPinnedUsers
+		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, nonPinnedUsers);
+		for (UserPageRankEvolution row : rowsSql) {
+			int candidate = row.getRowNumber().intValue();
 			if (candidate > result) {
 				result = candidate;
 			}

@@ -19,7 +19,6 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
 
-import com.sisifo.almadraba_server.exception.AlmadrabaCodingErrorException;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolutionId;
 import com.sisifo.almadraba_server.hbm.UserPageRankExec;
@@ -175,21 +174,6 @@ public class DatabaseUtils {
 		return getMaxUserSeriesSQL(session, number, null, rankExecId, pinnedUsers);
 	}
 
-
-	public static int getRowNumberForUserSQL(final Session session, final BigInteger lastUserId, final int rankExecId) {
-		String queryText = "select * from (" +getPageRankEvolutionMaxOrderQuery() + ") as maxrows where user_id = :user_id";
-		Query q = session.createSQLQuery(queryText)
-				.setInteger("rank_exec_id", rankExecId)
-				.setBigInteger("user_id", lastUserId);
-
-		@SuppressWarnings("unchecked")
-		List<Object[]> results = q.list(); 
-		for (Object[] result : results) {
-			return ((BigInteger)result[1]).intValue();
-		}
-
-		throw new AlmadrabaCodingErrorException("Can't find user_id=" + lastUserId);
-	}
 
 
 	/**
