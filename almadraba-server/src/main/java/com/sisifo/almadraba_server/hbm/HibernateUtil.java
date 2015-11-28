@@ -11,7 +11,7 @@ public class HibernateUtil {
 
     private static SessionFactory buildSessionFactory() {
     	
-    	URL r1 = HibernateUtil.class.getResource("/hibernate.cfg.xml");
+    	URL r1 = HibernateUtil.class.getResource("/hibernate.oracle.cfg.xml");
     	Configuration c = new Configuration().configure(r1);
         try {
             // Create the SessionFactory from hibernate.cfg.xml

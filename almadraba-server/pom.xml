@@ -54,7 +54,15 @@
 	    	<groupId>org.postgresql</groupId>
 	    	<artifactId>postgresql</artifactId>
 	    	<version>9.4-1203-jdbc42</version>
-		</dependency>    	
+		</dependency>
+		<!-- didn't find maven repository for this, steps:
+		     1. download from oracle
+		     2. mvn install:install-file -DgroupId=com.oracle -DartifactId=ojdbc7 -Dversion=1.0.0 -Dpackaging=jar -Dfile=/Users/lorenzorubio/Downloads/ojdbc7.jar -DgeneratePom=true -->
+		<dependency>
+    		<groupId>com.oracle</groupId>
+    		<artifactId>ojdbc7</artifactId>
+    		<version>1.0.0</version>
+		</dependency>
     </dependencies>
 
     <properties>
