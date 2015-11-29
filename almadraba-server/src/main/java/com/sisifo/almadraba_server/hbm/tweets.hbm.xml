@@ -1,0 +1,52 @@
+<?xml version="1.0"?>
+
+<!--
+  ~ Hibernate, Relational Persistence for Idiomatic Java
+  ~
+  ~ License: GNU Lesser General Public License (LGPL), version 2.1 or later.
+  ~ See the lgpl.txt file in the root directory or <http://www.gnu.org/licenses/lgpl-2.1.html>.
+  -->
+<!DOCTYPE hibernate-mapping PUBLIC
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping package="com.sisifo.almadraba_server.hbm">
+
+    <class name="Tweet" table="tweet">
+        <id name="id" type="big_integer" column="id"/>
+        <property name="createdAt" type="date" column="created_at"/>
+        <property name="favoriteCount" type="integer" column="favorite_count"/>
+        <property name="inReplyToStatusId" type="integer" column="in_reply_to_status_id"/>
+        <property name="inReplyToUserId" type="integer" column="in_reply_to_user_id"/>
+        <property name="placeFullName" type="string" column="place_full_name"/>
+        <property name="retweetCount" type="integer" column="retweet_count"/>
+        <property name="retweetedId" type="big_integer" column="retweeted_id"/>
+        <property name="text" type="string" column="text"/>
+        <property name="truncated" type="string" column="truncated"/>
+        <property name="userId" type="big_integer" column="user_id"/>
+        <property name="retweetedUserId" type="big_integer" column="retweeted_user_id"/>
+        <property name="retweet" type="boolean" column="retweet"/>        
+    </class>
+    
+    <class name="TweetUser" table="tuser">
+        <id name="id" type="big_integer" column="id"/>
+        <property name="createdAt" type="date" column="created_at"/>
+        <property name="contributorsEnabled" type="integer" column="contributors_enabled"/>
+        <property name="description" type="string" column="description"/>
+        <property name="favouritesCount" type="integer" column="favourites_count"/>
+        <property name="followersCount" type="integer" column="followers_count"/>
+        <property name="friendsCount" type="integer" column="friends_count"/>
+        <property name="isTranslator" type="integer" column="is_translator"/>
+        <property name="listedCount" type="integer" column="listed_count"/>
+        <property name="location" type="string" column="location"/>
+        <property name="name" type="string" column="name"/>
+        <property name="_protected" type="integer" column="protected"/>
+        <property name="screenName" type="string" column="screen_name"/>
+        <property name="statusesCount" type="integer" column="statuses_count"/>
+        <property name="url" type="string" column="url"/>
+        <property name="verified" type="integer" column="verified"/>
+        <property name="withheld" type="integer" column="withheld"/>
+        
+    </class>
+
+</hibernate-mapping>

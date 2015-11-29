@@ -12,6 +12,7 @@ import org.hibernate.Criteria;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.hibernate.criterion.DetachedCriteria;
+import org.hibernate.criterion.Order;
 import org.hibernate.criterion.ProjectionList;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Property;
@@ -19,6 +20,8 @@ import org.hibernate.criterion.Restrictions;
 import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
 
+import com.sisifo.almadraba_server.hbm.Tweet;
+import com.sisifo.almadraba_server.hbm.TweetUser;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolutionId;
 import com.sisifo.almadraba_server.hbm.UserPageRankExec;
@@ -62,6 +65,31 @@ public class DatabaseUtils {
 				.add(Restrictions.in("id.userId", users))
 				.add(Property.forName("id.rankExecId").eq(new String("full")));
 		return criteria.list();
+	}
+	
+	public static TweetUser getTweetUser(final Session session, final BigInteger userId) {
+		Criteria tuserC = session.createCriteria(TweetUser.class)
+				.add(Property.forName("id").eq(userId));
+		
+		@SuppressWarnings("unchecked")
+		List<TweetUser> users = tuserC.list();
+		if (users.isEmpty()) {
+			return null;
+		}
+		return users.get(0);
+	}
+
+	public static Tweet getTweetUserFamousTweet(final Session session, final BigInteger userId) {
+		Criteria tweetC = session.createCriteria(Tweet.class)
+				.add(Property.forName("userId").eq(userId))
+				.addOrder(Order.desc("retweetCount"));
+		
+		@SuppressWarnings("unchecked")
+		List<Tweet> tweets = tweetC.list();
+		if (tweets.isEmpty()) {
+			return null;
+		}
+		return tweets.get(0);
 	}
 
 	/**
