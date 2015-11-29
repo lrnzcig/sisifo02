@@ -13,9 +13,9 @@ define("main",
     // inspinia_loader loads all dependencies for inspinia template in 1 step, from require.config below
     // controllers do not need dependencies - they don't execute until document is ready
     // chart_controller is a singleton and it is not in the factory
-	["inspinia_loader", "controllers/chart_controller", "controllers/factory", "ajax/login", "ajax/submit_data"],
+	["inspinia_loader", "controllers/chart_controller", "controllers/factory", "ajax/login", "ajax/submit_data", "ajax/user_details"],
 
-	function (inspinia_loader, chart_controller, factory, ajax_login, ajax_submit_data) {
+	function (inspinia_loader, chart_controller, factory, ajax_login, ajax_submit_data, ajax_user_details) {
     // chosen init
     $(document).ready(function () {
       var config = {
@@ -45,6 +45,9 @@ define("main",
 
       var chart_collapse = document.getElementById("chart-collapse");
       chart_collapse.click();
+
+			var user_details_collapse = document.getElementById("user-details-collapse");
+      user_details_collapse.click();
 
       // function to detect is element is collapsed
       var is_chart_collapsed = function() {
@@ -112,6 +115,9 @@ define("main",
                                       .attr({
                                           text: 'x: ' + this.x + ', y: ' + this.y
                                       });
+																	set_selected_user(this.series.name);
+																	ajax_user_details.onClick();
+																	document.getElementById("user-details-collapse").click();
                               },
 															click: function () {
 																toggle_pinned_users(this.series.name);
@@ -123,6 +129,7 @@ define("main",
                               if (this.chart.lbl) {
                                   this.chart.lbl.hide();
                               }
+															document.getElementById("user-details-collapse").click();
                           }
                       }
                   }
@@ -186,6 +193,35 @@ define("main",
         return input_data;
       });
       $('#submit-data').click(ajax_submit_data.onClick);
+
+			// Get user details controllers
+			ajax_user_details.setActionFunction(function(data) {
+				if (data.userId) {
+					document.getElementById("user-box-id").value = data.userId;
+				}
+				if (data.statusesCount) {
+					document.getElementById("user-box-tweets").value = data.statusesCount;					
+				}
+				if (data.friendsCount) {
+					document.getElementById("user-box-friends").value = data.friendsCount;
+				}
+				if (data.followersCount) {
+					document.getElementById("user-box-followers").value = data.followersCount;
+				}
+				if (data.notoriousTweetText) {
+					document.getElementById("user-box-notorious-tweet").value = data.notoriousTweetText;
+				}
+			});
+			ajax_user_details.setGetInputDataFunction(function() {
+				return get_selected_user();
+			});
+			var selected_user;
+			var set_selected_user = function(user) {
+				selected_user = user;
+			};
+			var get_selected_user = function() {
+				return selected_user;
+			}
 
 			// gets list of pinned users
 			// (used by submit-data)
