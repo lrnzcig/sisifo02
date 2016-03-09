@@ -1,6 +1,7 @@
 package com.sisifo.almadraba_server.resources;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.ws.rs.PUT;
@@ -52,12 +53,17 @@ public class Chart {
 		
 		if (QueryType.TOP.equals(type)) {
 			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, rankExecId, params.getPinnedUsers());
-		} else {
+		} else if (QueryType.NEXT.equals(type)) {
 			Integer lastIdRowNumber = null;
 			if (params.getNonPinnedUsers() != null && params.getNonPinnedUsers().length > 0) {
 				lastIdRowNumber = getMinUserId(session, params.getNonPinnedUsers(), rankExecId);
 			}
 			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, lastIdRowNumber, rankExecId, params.getPinnedUsers());
+		} else {
+			// same results as before
+			BigInteger[] usersToShow = Arrays.copyOf(params.getNonPinnedUsers(), params.getNonPinnedUsers().length + params.getPinnedUsers().length);
+			System.arraycopy(params.getPinnedUsers(), 0, usersToShow, params.getNonPinnedUsers().length, params.getPinnedUsers().length);
+			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, usersToShow);
 		}
 		
 		session.disconnect();

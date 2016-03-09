@@ -11,13 +11,15 @@ public class AlmadrabaChartParams {
 	
 	public enum QueryType {
 		TOP,
-		NEXT;
+		NEXT,
+		SAME;
 		
 		private static Map<String, QueryType> namesMap = new HashMap<String, QueryType>();
 		
 		static {
 			namesMap.put("top", QueryType.TOP);
 			namesMap.put("next", QueryType.NEXT);
+			namesMap.put("same", QueryType.SAME);
 		}
 		
 		@JsonCreator
