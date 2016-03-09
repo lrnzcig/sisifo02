@@ -14,7 +14,7 @@ public class TweetUser {
 	@Id
 	private BigInteger id;
 	private Date createdAt;
-	private Integer contributorsEnabled;
+	private Boolean contributorsEnabled;
 	private String description;
 	private Integer favouritesCount;
 	private Integer followersCount;
@@ -41,10 +41,10 @@ public class TweetUser {
 	public void setCreatedAt(final Date createdAt) {
 		this.createdAt = createdAt;
 	}
-	public Integer getContributorsEnabled() {
+	public Boolean getContributorsEnabled() {
 		return contributorsEnabled;
 	}
-	public void setContributorsEnabled(final Integer contributorsEnabled) {
+	public void setContributorsEnabled(final Boolean contributorsEnabled) {
 		this.contributorsEnabled = contributorsEnabled;
 	}
 	public String getDescription() {

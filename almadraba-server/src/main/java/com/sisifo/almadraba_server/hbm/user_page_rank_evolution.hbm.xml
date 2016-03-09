@@ -24,7 +24,7 @@
     <class name="UserPageRankExec" table="user_page_rank_exec">
         <id name="id" type="integer" column="id"/>
         <property name="rankExecLabel" type="string" column="rank_exec_label"/>
-        <property name="hourStep" type="string" column="hour_step"/>
+        <property name="hourStep" type="integer" column="hour_step"/>
     </class>
 
     <class name="UserPageRankExecStep" table="user_page_rank_exec_step">

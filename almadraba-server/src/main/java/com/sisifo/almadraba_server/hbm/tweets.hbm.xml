@@ -31,7 +31,7 @@
     <class name="TweetUser" table="tuser">
         <id name="id" type="big_integer" column="id"/>
         <property name="createdAt" type="date" column="created_at"/>
-        <property name="contributorsEnabled" type="integer" column="contributors_enabled"/>
+        <property name="contributorsEnabled" type="boolean" column="contributors_enabled"/>
         <property name="description" type="string" column="description"/>
         <property name="favouritesCount" type="integer" column="favourites_count"/>
         <property name="followersCount" type="integer" column="followers_count"/>
