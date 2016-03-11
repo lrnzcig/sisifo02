@@ -40,7 +40,7 @@ public class ChartTest {
 		Assert.assertEquals(200, response.getStatus());
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
-		Assert.assertEquals(34, chart.getStepIds().length);	 // TODO should be 17
+		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
 	}
 
 	@Test
@@ -65,7 +65,7 @@ public class ChartTest {
 		Assert.assertEquals(200, response.getStatus());
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
-		Assert.assertEquals(34, chart.getStepIds().length);	 // TODO should be 17
+		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
 		Assert.assertEquals(BigInteger.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertEquals(BigInteger.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
 		Assert.assertEquals(BigInteger.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
@@ -88,7 +88,7 @@ public class ChartTest {
 		Assert.assertEquals(200, response.getStatus());
 		chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
-		Assert.assertEquals(34, chart.getStepIds().length);	 // TODO should be 17
+		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(1)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(2)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(3)));
@@ -118,7 +118,7 @@ public class ChartTest {
 		Assert.assertEquals(200, response.getStatus());
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
-		Assert.assertEquals(34, chart.getStepIds().length);	 // TODO should be 17
+		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
 		Assert.assertEquals(BigInteger.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertEquals(BigInteger.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
 		Assert.assertEquals(BigInteger.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
@@ -142,7 +142,7 @@ public class ChartTest {
 		Assert.assertEquals(200, response.getStatus());
 		chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(6, chart.getSeries().length);
-		Assert.assertEquals(34, chart.getStepIds().length);	 // TODO should be 17
+		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
 		Assert.assertEquals(BigInteger.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(2)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(3)));

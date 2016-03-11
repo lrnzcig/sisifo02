@@ -50,6 +50,9 @@ public class AlmadrabaChart {
 	}
 
 	public void addStepIdItem(final String item) {
+		if (this.stepIds != null && Arrays.asList(this.stepIds).contains(item)) {
+			return;
+		}
 		if (this.stepIds == null) {
 			this.stepIds = new String[1];
 		} else {
