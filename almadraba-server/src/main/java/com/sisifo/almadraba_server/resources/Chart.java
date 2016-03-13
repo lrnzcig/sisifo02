@@ -1,6 +1,5 @@
 package com.sisifo.almadraba_server.resources;
 
-import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -15,6 +14,7 @@ import org.hibernate.Session;
 
 import com.sisifo.almadraba_server.AlmadrabaContextListener;
 import com.sisifo.almadraba_server.data.DatabaseUtils;
+import com.sisifo.almadraba_server.data.UserUtils;
 import com.sisifo.almadraba_server.exception.AlmadrabaAuthenticationException;
 import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
 import com.sisifo.almadraba_server.hbm.UserPageRankExec;
@@ -52,18 +52,18 @@ public class Chart {
 		List<UserPageRankEvolution> rowsSql;
 		
 		if (QueryType.TOP.equals(type)) {
-			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, rankExecId, params.getPinnedUsers());
+			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, rankExecId, UserUtils.getUserIdArray(params.getPinnedUsers()));
 		} else if (QueryType.NEXT.equals(type)) {
 			Integer lastIdRowNumber = null;
 			if (params.getNonPinnedUsers() != null && params.getNonPinnedUsers().length > 0) {
 				lastIdRowNumber = getMinUserId(session, params.getNonPinnedUsers(), rankExecId);
 			}
-			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, lastIdRowNumber, rankExecId, params.getPinnedUsers());
+			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, lastIdRowNumber, rankExecId, UserUtils.getUserIdArray(params.getPinnedUsers()));
 		} else {
 			// same results as before
-			BigInteger[] usersToShow = Arrays.copyOf(params.getNonPinnedUsers(), params.getNonPinnedUsers().length + params.getPinnedUsers().length);
+			String[] usersToShow = Arrays.copyOf(params.getNonPinnedUsers(), params.getNonPinnedUsers().length + params.getPinnedUsers().length);
 			System.arraycopy(params.getPinnedUsers(), 0, usersToShow, params.getNonPinnedUsers().length, params.getPinnedUsers().length);
-			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, usersToShow);
+			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, UserUtils.getUserIdArray(usersToShow));
 		}
 		
 		session.disconnect();
@@ -74,10 +74,10 @@ public class Chart {
         return chart;
     }
 
-	private int getMinUserId(final Session session, final BigInteger[] nonPinnedUsers, final Integer rankExecId) {
+	private int getMinUserId(final Session session, final String[] nonPinnedUsers, final Integer rankExecId) {
 		int result = 0;
 		// get just the rows for the nonPinnedUsers
-		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, nonPinnedUsers);
+		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, UserUtils.getUserIdArray(nonPinnedUsers));
 		for (UserPageRankEvolution row : rowsSql) {
 			int candidate = row.getRowNumber().intValue();
 			if (candidate > result) {

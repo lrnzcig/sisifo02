@@ -66,16 +66,16 @@ public class ChartTest {
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
-		Assert.assertEquals(BigInteger.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(173665005), chart.getSeries(BigInteger.valueOf(4)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(187564239), chart.getSeries(BigInteger.valueOf(5)).getUserId());
+		Assert.assertEquals(String.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
+		Assert.assertEquals(String.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
+		Assert.assertEquals(String.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
+		Assert.assertEquals(String.valueOf(173665005), chart.getSeries(BigInteger.valueOf(4)).getUserId());
+		Assert.assertEquals(String.valueOf(187564239), chart.getSeries(BigInteger.valueOf(5)).getUserId());
 
 		params.setQueryType(QueryType.NEXT);
 		params.setNumber(5);
 		params.setExecutionLabel("full");
-		BigInteger[] nonPinnedUsers = new BigInteger[chart.getSeries().length];
+		String[] nonPinnedUsers = new String[chart.getSeries().length];
 		for (int i = 0; i < chart.getSeries().length; i++) {
 			nonPinnedUsers[i] = chart.getSeries()[i].getUserId();
 		}
@@ -119,17 +119,17 @@ public class ChartTest {
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
-		Assert.assertEquals(BigInteger.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(173665005), chart.getSeries(BigInteger.valueOf(4)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(187564239), chart.getSeries(BigInteger.valueOf(5)).getUserId());
+		Assert.assertEquals(String.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
+		Assert.assertEquals(String.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
+		Assert.assertEquals(String.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
+		Assert.assertEquals(String.valueOf(173665005), chart.getSeries(BigInteger.valueOf(4)).getUserId());
+		Assert.assertEquals(String.valueOf(187564239), chart.getSeries(BigInteger.valueOf(5)).getUserId());
 
 		params.setQueryType(QueryType.NEXT);
 		params.setNumber(5);
 		params.setExecutionLabel("full");
-		params.setPinnedUsers(new BigInteger[] {BigInteger.valueOf(282339186)});
-		BigInteger[] nonPinnedUsers = new BigInteger[chart.getSeries().length];
+		params.setPinnedUsers(new String[] {String.valueOf(282339186)});
+		String[] nonPinnedUsers = new String[chart.getSeries().length];
 		for (int i = 0; i < chart.getSeries().length; i++) {
 			nonPinnedUsers[i] = chart.getSeries()[i].getUserId();
 		}
@@ -143,16 +143,16 @@ public class ChartTest {
 		chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(6, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
-		Assert.assertEquals(BigInteger.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
+		Assert.assertEquals(String.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(2)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(3)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(4)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(5)));
-		Assert.assertEquals(BigInteger.valueOf(3131660806L), chart.getSeries(BigInteger.valueOf(6)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(267058747), chart.getSeries(BigInteger.valueOf(7)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(3135332230L), chart.getSeries(BigInteger.valueOf(8)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(1652459718), chart.getSeries(BigInteger.valueOf(9)).getUserId());
-		Assert.assertEquals(BigInteger.valueOf(2531053765L), chart.getSeries(BigInteger.valueOf(10)).getUserId());
+		Assert.assertEquals(String.valueOf(3131660806L), chart.getSeries(BigInteger.valueOf(6)).getUserId());
+		Assert.assertEquals(String.valueOf(267058747), chart.getSeries(BigInteger.valueOf(7)).getUserId());
+		Assert.assertEquals(String.valueOf(3135332230L), chart.getSeries(BigInteger.valueOf(8)).getUserId());
+		Assert.assertEquals(String.valueOf(1652459718), chart.getSeries(BigInteger.valueOf(9)).getUserId());
+		Assert.assertEquals(String.valueOf(2531053765L), chart.getSeries(BigInteger.valueOf(10)).getUserId());
 	}
 
 }

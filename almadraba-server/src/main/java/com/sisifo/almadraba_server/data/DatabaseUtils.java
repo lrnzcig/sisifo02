@@ -238,7 +238,7 @@ public class DatabaseUtils {
 		for (UserPageRankEvolution upre : rows) {
 			BigInteger id = upre.getId().getUserId();
 			if (mapSeries.get(id) == null) {
-				mapSeries.put(id, new AlmadrabaSeries(id));
+				mapSeries.put(id, new AlmadrabaSeries(UserUtils.getUserPublicName(id)));
 			}
 			
 			AlmadrabaSeries series = mapSeries.get(id);

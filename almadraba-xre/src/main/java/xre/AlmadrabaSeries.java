@@ -5,7 +5,7 @@ import java.util.Arrays;
 
 public class AlmadrabaSeries {
 	
-	private BigInteger userId;
+	private String userId;
 	private Float[] series;
 	private BigInteger rowNumber;
 	
@@ -13,22 +13,22 @@ public class AlmadrabaSeries {
 		super();
 	}
 
-	public AlmadrabaSeries(final BigInteger userId, final Float[] series) {
+	public AlmadrabaSeries(final String userId, final Float[] series) {
 		super();
 		this.userId = userId;
 		this.series = series;
 	}
 
-	public AlmadrabaSeries(final BigInteger userId) {
+	public AlmadrabaSeries(final String userId) {
 		super();
 		this.userId = userId;
 	}
 
-	public BigInteger getUserId() {
+	public String getUserId() {
 		return userId;
 	}
 
-	public void setUserId(final BigInteger userId) {
+	public void setUserId(final String userId) {
 		this.userId = userId;
 	}
 

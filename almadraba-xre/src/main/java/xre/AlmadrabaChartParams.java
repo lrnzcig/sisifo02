@@ -1,6 +1,5 @@
 package xre;
 
-import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +40,8 @@ public class AlmadrabaChartParams {
 	private QueryType queryType;
 	private String executionLabel;
 	private int number;
-	private BigInteger[] nonPinnedUsers;
-	private BigInteger[] pinnedUsers;
+	private String[] nonPinnedUsers;
+	private String[] pinnedUsers;
 	
 	public AlmadrabaChartParams() {
 		super();
@@ -77,11 +76,11 @@ public class AlmadrabaChartParams {
 	 * 
 	 * @return
 	 */
-	public BigInteger[] getNonPinnedUsers() {
+	public String[] getNonPinnedUsers() {
 		return this.nonPinnedUsers;
 	}
 	
-	public void setNonPinnedUsers(final BigInteger[] nonPinnedUsers) {
+	public void setNonPinnedUsers(final String[] nonPinnedUsers) {
 		this.nonPinnedUsers = nonPinnedUsers;
 	}
 
@@ -90,11 +89,11 @@ public class AlmadrabaChartParams {
 	 * 
 	 * @return
 	 */
-	public BigInteger[] getPinnedUsers() {
+	public String[] getPinnedUsers() {
 		return this.pinnedUsers;
 	}
 	
-	public void setPinnedUsers(final BigInteger[] pinnedUsers) {
+	public void setPinnedUsers(final String[] pinnedUsers) {
 		this.pinnedUsers = pinnedUsers;
 	}
 
