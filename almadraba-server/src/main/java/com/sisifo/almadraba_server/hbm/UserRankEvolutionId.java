@@ -6,7 +6,7 @@ import java.math.BigInteger;
 import javax.persistence.Column;
 
 
-public class UserPageRankEvolutionId implements Serializable {
+public class UserRankEvolutionId implements Serializable {
 	/**
 	 * 
 	 */
@@ -19,11 +19,11 @@ public class UserPageRankEvolutionId implements Serializable {
 	@Column(name="step_order")
 	private Integer stepOrder;
 
-	public UserPageRankEvolutionId() {
+	public UserRankEvolutionId() {
 		super();
 	}
 		
-	public UserPageRankEvolutionId(final BigInteger userId, final Integer rankExecId,
+	public UserRankEvolutionId(final BigInteger userId, final Integer rankExecId,
 			final Integer stepOrder) {
 		super();
 		this.userId = userId;

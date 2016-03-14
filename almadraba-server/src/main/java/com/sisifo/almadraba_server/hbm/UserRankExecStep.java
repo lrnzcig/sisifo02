@@ -8,8 +8,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user_page_rank_exec_step")
-public class UserPageRankExecStep {
+@Table(name="user_rank_exec_step")
+public class UserRankExecStep {
 
 	@Id
 	private Integer id;
@@ -22,11 +22,11 @@ public class UserPageRankExecStep {
 	@Column(name="step_timestamp")
 	private Date stepTimestamp;
 	
-	public UserPageRankExecStep() {
+	public UserRankExecStep() {
 		super();
 	}
 
-	public UserPageRankExecStep(final Integer id, final Integer rankExecId, final String rankStepLabel, final Integer stepOrder,
+	public UserRankExecStep(final Integer id, final Integer rankExecId, final String rankStepLabel, final Integer stepOrder,
 			final Date stepTimestamp) {
 		super();
 		this.id = id;

@@ -22,10 +22,10 @@ import org.hibernate.type.Type;
 
 import com.sisifo.almadraba_server.hbm.Tweet;
 import com.sisifo.almadraba_server.hbm.TweetUser;
-import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
-import com.sisifo.almadraba_server.hbm.UserPageRankEvolutionId;
-import com.sisifo.almadraba_server.hbm.UserPageRankExec;
-import com.sisifo.almadraba_server.hbm.UserPageRankExecStep;
+import com.sisifo.almadraba_server.hbm.UserRankEvolution;
+import com.sisifo.almadraba_server.hbm.UserRankEvolutionId;
+import com.sisifo.almadraba_server.hbm.UserRankExec;
+import com.sisifo.almadraba_server.hbm.UserRankExecStep;
 
 import xre.AlmadrabaChart;
 import xre.AlmadrabaSeries;
@@ -34,12 +34,12 @@ public class DatabaseUtils {
 
 	@SuppressWarnings("unchecked")
 	@Deprecated
-	public static List<UserPageRankEvolution> getTopUserSeries(final Session session, final int number, final BigInteger[] additionalUserIds) {
+	public static List<UserRankEvolution> getTopUserSeries(final Session session, final int number, final BigInteger[] additionalUserIds) {
 		// 1st select the users as a subquery	
 		ProjectionList pl = Projections.projectionList()
 				.add(Projections.property("id.userId"))
 				.add(Projections.sqlProjection("row_number() over() as rownum", new String[] {"rownum"}, new Type[] { new IntegerType() }));
-		Criteria usersC = session.createCriteria(UserPageRankEvolution.class)
+		Criteria usersC = session.createCriteria(UserRankEvolution.class)
 				.addOrder(Property.forName("rank").desc())
 				.add(Property.forName("id.rankExecId").eq(new String("full")))
 				.add(Property.forName("id.rankStepId").eq(new String("rank")))
@@ -61,7 +61,7 @@ public class DatabaseUtils {
 		}
 		
 		// get series
-		Criteria criteria = session.createCriteria(UserPageRankEvolution.class)
+		Criteria criteria = session.createCriteria(UserRankEvolution.class)
 				.add(Restrictions.in("id.userId", users))
 				.add(Property.forName("id.rankExecId").eq(new String("full")));
 		return criteria.list();
@@ -94,7 +94,7 @@ public class DatabaseUtils {
 
 	/**
 	 * Execute query directly in SQL
-	 * Max means that the user order is solved using the maximum step_order in the page rank evolution
+	 * Max means that the user order is solved using the maximum step_order in the rank evolution
 	 * TODO
 	 * TODO does this make sense???
 	 * TODO
@@ -104,12 +104,12 @@ public class DatabaseUtils {
 	 * @param additionalIds e.g. new BigInteger[] {BigInteger.valueOf(38643994)}
 	 * @return
 	 */
-	public static List<UserPageRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, final Integer lastIdRowNumber,
+	public static List<UserRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, final Integer lastIdRowNumber,
 			final Integer rankExecId, final BigInteger[] additionalIds) {
 		// 1. composing query
 		boolean minRowNumberPresent = lastIdRowNumber != null;
 		boolean additionalIdsPresent = additionalIds != null && additionalIds.length > 0; 
-		String queryText = getPageRankEvolutionOrderedForRangeQuery(minRowNumberPresent, additionalIdsPresent);
+		String queryText = getRankEvolutionOrderedForRangeQuery(minRowNumberPresent, additionalIdsPresent);
 		
 		// 2. calculating min and max orders
 		int max_number = number;
@@ -131,13 +131,13 @@ public class DatabaseUtils {
 		}
 		
 		// 4. launching query and output
-		List<UserPageRankEvolution> output = new ArrayList<UserPageRankEvolution>();
+		List<UserRankEvolution> output = new ArrayList<UserRankEvolution>();
 		@SuppressWarnings("unchecked")
 		List<Object[]> results = q.list(); 
 		for (Object[] result : results) {
-			UserPageRankEvolution row = new UserPageRankEvolution();
+			UserRankEvolution row = new UserRankEvolution();
 			output.add(row);
-			row.setId(new UserPageRankEvolutionId((BigInteger) result[0], (Integer) result[1], (Integer) result[2]));
+			row.setId(new UserRankEvolutionId((BigInteger) result[0], (Integer) result[1], (Integer) result[2]));
 			double rank = (double) result[3];
 			row.setRank((float) rank);
 			row.setRowNumber((BigInteger) result[4]);
@@ -147,23 +147,23 @@ public class DatabaseUtils {
 	}
 	
 	/**
-	 * Max means that the user order is solved using the maximum step_order in the page rank evolution
+	 * Max means that the user order is solved using the maximum step_order in the rank evolution
 	 * TODO
 	 * TODO does this make sense???
 	 * TODO
 	 * 
 	 * @return
 	 */
-	private static String getPageRankEvolutionMaxOrderQuery() {
+	private static String getRankEvolutionMaxOrderQuery() {
 		return "select user_id as user_id, row_number() over(order by rank desc) as rownumber"
-				+ "	    	from user_page_rank_evolution"
+				+ "	    	from user_rank_evolution"
 				+ "	    	where (rank_exec_id, step_order) = "
-				+ "             (select :rank_exec_id, max(step_order) from user_page_rank_evolution where rank_exec_id = :rank_exec_id)";
+				+ "             (select :rank_exec_id, max(step_order) from user_rank_evolution where rank_exec_id = :rank_exec_id)";
 	}
 	
-	private static String getPageRankEvolutionMaxOrderRangeQuery(final boolean minRowNumberPresent, final boolean additionalIdsPresent) {
+	private static String getRankEvolutionMaxOrderRangeQuery(final boolean minRowNumberPresent, final boolean additionalIdsPresent) {
 		String queryText = "select user_id, rownumber from ("
-							+ getPageRankEvolutionMaxOrderQuery()
+							+ getRankEvolutionMaxOrderQuery()
 							+ ") as maxrows "
 							+ "where (rownumber <= :max_number";
 		if (minRowNumberPresent) {
@@ -176,9 +176,9 @@ public class DatabaseUtils {
 		return queryText;
 	}
 	
-	private static String getPageRankEvolutionOrderedForRangeQuery(final boolean minRowNumberPresent, final boolean additionalIdsPresent) {
+	private static String getRankEvolutionOrderedForRangeQuery(final boolean minRowNumberPresent, final boolean additionalIdsPresent) {
 		return "select upre.*, user_rownumber.rownumber "
-				+ "from user_page_rank_evolution as upre, (" + getPageRankEvolutionMaxOrderRangeQuery(minRowNumberPresent, additionalIdsPresent) 
+				+ "from user_rank_evolution as upre, (" + getRankEvolutionMaxOrderRangeQuery(minRowNumberPresent, additionalIdsPresent) 
 														+ ") as user_rownumber "
 				+ "where user_rownumber.user_id = upre.user_id "
 				+ "and rank_exec_id = :rank_exec_id "
@@ -186,7 +186,7 @@ public class DatabaseUtils {
 	}
 
 	/**
-	 * Max means that the user order is solved using the maximum step_order in the page rank evolution
+	 * Max means that the user order is solved using the maximum step_order in the rank evolution
 	 * TODO
 	 * TODO does this make sense???
 	 * TODO
@@ -197,7 +197,7 @@ public class DatabaseUtils {
 	 * @param pinnedUsers
 	 * @return
 	 */
-	public static List<UserPageRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, 
+	public static List<UserRankEvolution> getMaxUserSeriesSQL(final Session session, final int number, 
 			final Integer rankExecId, final BigInteger[] pinnedUsers) {
 		return getMaxUserSeriesSQL(session, number, null, rankExecId, pinnedUsers);
 	}
@@ -207,7 +207,7 @@ public class DatabaseUtils {
 	/**
 	 * Returns a query. To paginate over it do something like
 	 * 		@SuppressWarnings("unchecked")
-	 *		List<UserPageRankEvolution> rowsPaginate = rowsPaginateQuery.setFirstResult(0).setMaxResults(number*7).list();
+	 *		List<UserRankEvolution> rowsPaginate = rowsPaginateQuery.setFirstResult(0).setMaxResults(number*7).list();
 	 *
 	 * @param session
 	 * @param number
@@ -219,13 +219,13 @@ public class DatabaseUtils {
 				.add(Projections.property("id.userId"));
 
 		// this does not select any user, it just orders them
-		DetachedCriteria subCriteria = DetachedCriteria.forClass(UserPageRankEvolution.class)
+		DetachedCriteria subCriteria = DetachedCriteria.forClass(UserRankEvolution.class)
 				.addOrder(Property.forName("rank").desc())
 				.add(Property.forName("id.rankExecId").eq(new String("full")))
 				.add(Property.forName("id.rankStepId").eq(new String("rank")))
 				.setProjection(pl);
 
-		Criteria criteria2 = session.createCriteria(UserPageRankEvolution.class)
+		Criteria criteria2 = session.createCriteria(UserRankEvolution.class)
 				.add(Property.forName("id.userId").in(subCriteria))
 				.add(Property.forName("id.rankExecId").eq(new String("full")));
 		return criteria2;
@@ -233,9 +233,9 @@ public class DatabaseUtils {
 
 	
 	public static void addDatabaseRowsToChartSeries(final Session session, final AlmadrabaChart chart, final Integer rankExecId,
-			final List<UserPageRankEvolution> rows) {
+			final List<UserRankEvolution> rows) {
 		Map<BigInteger, AlmadrabaSeries> mapSeries = new HashMap<BigInteger, AlmadrabaSeries>();
-		for (UserPageRankEvolution upre : rows) {
+		for (UserRankEvolution upre : rows) {
 			BigInteger id = upre.getId().getUserId();
 			if (mapSeries.get(id) == null) {
 				mapSeries.put(id, new AlmadrabaSeries(UserUtils.getUserPublicName(id)));
@@ -250,44 +250,44 @@ public class DatabaseUtils {
 			chart.addSeriesItem(mapSeries.get(id));
 		}
 		
-		UserPageRankExec exec = getUserPageRankExec(session, rankExecId);
+		UserRankExec exec = getUserRankExec(session, rankExecId);
 		chart.setRankExecLabel(exec.getRankExecLabel());
 		chart.setHourStep(exec.getHourStep());
 		
-		List<UserPageRankExecStep> execSteps = getUserPageRankExecStep(session, rankExecId);
-		for (UserPageRankExecStep execStep : execSteps) {
+		List<UserRankExecStep> execSteps = getUserRankExecStep(session, rankExecId);
+		for (UserRankExecStep execStep : execSteps) {
 			chart.addStepIdItem(execStep.getRankStepLabel());
 		}
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<UserPageRankExecStep> getUserPageRankExecStep(final Session session, final int rankExecId) {
-		Criteria criteria = session.createCriteria(UserPageRankExecStep.class)
+	private static List<UserRankExecStep> getUserRankExecStep(final Session session, final int rankExecId) {
+		Criteria criteria = session.createCriteria(UserRankExecStep.class)
 				.add(Property.forName("rankExecId").eq(rankExecId));
 		return criteria.list();
 	}
 
-	private static UserPageRankExec getUserPageRankExec(final Session session, final int rankExecId) {
-		Criteria criteria = session.createCriteria(UserPageRankExec.class)
+	private static UserRankExec getUserRankExec(final Session session, final int rankExecId) {
+		Criteria criteria = session.createCriteria(UserRankExec.class)
 				.add(Property.forName("id").eq(rankExecId));
-		return (UserPageRankExec) criteria.list().get(0);
+		return (UserRankExec) criteria.list().get(0);
 	}
 
 
-	private static Map<String, UserPageRankExec> executions = new HashMap<String, UserPageRankExec>();
+	private static Map<String, UserRankExec> executions = new HashMap<String, UserRankExec>();
 
-	public static void loadUserPageRankExec(final Session session) {
-		Criteria criteria = session.createCriteria(UserPageRankExec.class);
+	public static void loadUserRankExec(final Session session) {
+		Criteria criteria = session.createCriteria(UserRankExec.class);
 		@SuppressWarnings("unchecked")
-		List<UserPageRankExec> upreList = criteria.list();
-		for (UserPageRankExec upre : upreList) {
+		List<UserRankExec> upreList = criteria.list();
+		for (UserRankExec upre : upreList) {
 			executions.put(upre.getRankExecLabel(), upre);
 		}
 	}
 	
-	public static UserPageRankExec getExecution(final String value) {
+	public static UserRankExec getExecution(final String value) {
 		if (executions.keySet().isEmpty()) {
-			throw new RuntimeException("UserPageRankExec have not been loaded at login");
+			throw new RuntimeException("UserRankExec have not been loaded at login");
 		}
 		return executions.get(value);
 	}

@@ -16,8 +16,8 @@ import com.sisifo.almadraba_server.AlmadrabaContextListener;
 import com.sisifo.almadraba_server.data.DatabaseUtils;
 import com.sisifo.almadraba_server.data.UserUtils;
 import com.sisifo.almadraba_server.exception.AlmadrabaAuthenticationException;
-import com.sisifo.almadraba_server.hbm.UserPageRankEvolution;
-import com.sisifo.almadraba_server.hbm.UserPageRankExec;
+import com.sisifo.almadraba_server.hbm.UserRankEvolution;
+import com.sisifo.almadraba_server.hbm.UserRankExec;
 
 import xre.AlmadrabaChart;
 import xre.AlmadrabaChartParams;
@@ -40,7 +40,7 @@ public class Chart {
 		int number = params.getNumber();
 		QueryType type = params.getQueryType();
 
-		UserPageRankExec exec = DatabaseUtils.getExecution(params.getExecutionLabel());
+		UserRankExec exec = DatabaseUtils.getExecution(params.getExecutionLabel());
 		Integer rankExecId;
 		if (exec != null) {
 			rankExecId = exec.getId();
@@ -49,7 +49,7 @@ public class Chart {
 			rankExecId = DatabaseUtils.getExecution(DatabaseUtils.getExecutionLabels()[0]).getId();
 		}
 		
-		List<UserPageRankEvolution> rowsSql;
+		List<UserRankEvolution> rowsSql;
 		
 		if (QueryType.TOP.equals(type)) {
 			rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, number, rankExecId, UserUtils.getUserIdArray(params.getPinnedUsers()));
@@ -77,8 +77,8 @@ public class Chart {
 	private int getMinUserId(final Session session, final String[] nonPinnedUsers, final Integer rankExecId) {
 		int result = 0;
 		// get just the rows for the nonPinnedUsers
-		List<UserPageRankEvolution> rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, UserUtils.getUserIdArray(nonPinnedUsers));
-		for (UserPageRankEvolution row : rowsSql) {
+		List<UserRankEvolution> rowsSql = DatabaseUtils.getMaxUserSeriesSQL(session, 0, rankExecId, UserUtils.getUserIdArray(nonPinnedUsers));
+		for (UserRankEvolution row : rowsSql) {
 			int candidate = row.getRowNumber().intValue();
 			if (candidate > result) {
 				result = candidate;

@@ -27,7 +27,7 @@ public class Login {
     	Session session = AlmadrabaContextListener.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 
-    	DatabaseUtils.loadUserPageRankExec(session);
+    	DatabaseUtils.loadUserRankExec(session);
 
 		session.disconnect();
 		

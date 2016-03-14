@@ -7,32 +7,32 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user_page_rank_evolution")
-public class UserPageRankEvolution {
+@Table(name="user_rank_evolution")
+public class UserRankEvolution {
 	
 	@Id
-	private UserPageRankEvolutionId id;
+	private UserRankEvolutionId id;
 	private Float rank;
 	
 	// following field comes from the ordered join; if the object is informed by hibernate it will fail
 	// this gives the rank ordering to the GUI
 	private BigInteger rowNumber;
 	
-	public UserPageRankEvolution() {
+	public UserRankEvolution() {
 		super();
 	}
 
-	public UserPageRankEvolution(final UserPageRankEvolutionId id, final Float rank) {
+	public UserRankEvolution(final UserRankEvolutionId id, final Float rank) {
 		super();
 		this.id = id;
 		this.rank = rank;
 	}
 
-	public UserPageRankEvolutionId getId() {
+	public UserRankEvolutionId getId() {
 		return id;
 	}
 
-	public void setId(final UserPageRankEvolutionId id) {
+	public void setId(final UserRankEvolutionId id) {
 		this.id = id;
 	}
 

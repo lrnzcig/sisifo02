@@ -12,8 +12,8 @@
 
 <hibernate-mapping package="com.sisifo.almadraba_server.hbm">
 
-    <class name="UserPageRankEvolution" table="user_page_rank_evolution">
-        <composite-id name="id" class="UserPageRankEvolutionId">
+    <class name="UserRankEvolution" table="user_rank_evolution">
+        <composite-id name="id" class="UserRankEvolutionId">
 	        <key-property name="userId" type="big_integer" column="user_id"/>
 	        <key-property name="rankExecId" type="integer" column="rank_exec_id"/>
     	    <key-property name="stepOrder" type="string" column="step_order"/>
@@ -21,13 +21,14 @@
         <property name="rank" type="float" column="rank"/>
     </class>
 
-    <class name="UserPageRankExec" table="user_page_rank_exec">
+    <class name="UserRankExec" table="user_rank_exec">
         <id name="id" type="integer" column="id"/>
         <property name="rankExecLabel" type="string" column="rank_exec_label"/>
         <property name="hourStep" type="integer" column="hour_step"/>
+        <property name="userType" type="string" column="user_type"/>
     </class>
 
-    <class name="UserPageRankExecStep" table="user_page_rank_exec_step">
+    <class name="UserRankExecStep" table="user_rank_exec_step">
         <id name="id" type="integer" column="id"/>
         <property name="rankExecId" type="integer" column="rank_exec_id"/>
         <property name="rankStepLabel" type="string" column="rank_step_label"/>

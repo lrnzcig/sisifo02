@@ -6,8 +6,8 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="user_page_rank_exec")
-public class UserPageRankExec {
+@Table(name="user_rank_exec")
+public class UserRankExec {
 	
 	@Id
 	private Integer id;
@@ -15,12 +15,14 @@ public class UserPageRankExec {
 	private String rankExecLabel;
 	@Column(name="hour_step")
 	private Integer hourStep;
+	@Column(name="user_type")
+	private String userType;
 
-	public UserPageRankExec() {
+	public UserRankExec() {
 		super();
 	}
 
-	public UserPageRankExec(final Integer id, final String rankExecLabel, final Integer hourStep) {
+	public UserRankExec(final Integer id, final String rankExecLabel, final Integer hourStep) {
 		super();
 		this.id = id;
 		this.rankExecLabel = rankExecLabel;
@@ -50,8 +52,14 @@ public class UserPageRankExec {
 	public void setHourStep(final Integer hourStep) {
 		this.hourStep = hourStep;
 	}
-	
-	
+
+	public String getUserType() {
+		return userType;
+	}
+
+	public void setUserType(final String userType) {
+		this.userType = userType;
+	}
 
 
 }
