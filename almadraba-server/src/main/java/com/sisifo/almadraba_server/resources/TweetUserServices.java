@@ -12,11 +12,13 @@ import javax.ws.rs.core.SecurityContext;
 import org.hibernate.Session;
 
 import com.sisifo.almadraba_server.AlmadrabaContextListener;
+import com.sisifo.almadraba_server.data.AlmadrabaUserFactory;
 import com.sisifo.almadraba_server.data.DatabaseUtils;
 import com.sisifo.almadraba_server.exception.AlmadrabaAuthenticationException;
 import com.sisifo.almadraba_server.hbm.Tweet;
 import com.sisifo.almadraba_server.hbm.TweetUser;
 
+import xre.AlmadrabaChart.UserType;
 import xre.AlmadrabaTweetUser;
 
 @Path("user")
@@ -33,7 +35,7 @@ public class TweetUserServices {
     	Session session = AlmadrabaContextListener.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 
-		TweetUser tuser = DatabaseUtils.getTweetUser(session, userId);
+		TweetUser tuser = (TweetUser) AlmadrabaUserFactory.getUser(session, userId, UserType.TWITTER);
 		
 		AlmadrabaTweetUser output = new AlmadrabaTweetUser();
 		output.setUserId(userId);

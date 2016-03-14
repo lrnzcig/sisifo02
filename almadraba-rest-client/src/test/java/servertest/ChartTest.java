@@ -13,10 +13,14 @@ import org.junit.Test;
 
 import almadraba_rest_client.utils.ClientUtils;
 import xre.AlmadrabaChart;
+import xre.AlmadrabaChart.UserType;
 import xre.AlmadrabaChartParams;
 import xre.AlmadrabaChartParams.QueryType;
 
 public class ChartTest {
+	
+	private static String TWITTER_EXECUTION_LABEL = "tw - full pagerank";
+	private static String GENERIC_EXECUTION_LABEL = "wiki - full pagerank";
 
 	@Test
 	public void submitDataSimple() {
@@ -25,7 +29,7 @@ public class ChartTest {
 		AlmadrabaChartParams params = new AlmadrabaChartParams();
 		params.setQueryType(QueryType.TOP);
 		params.setNumber(5);
-		params.setExecutionLabel("full");
+		params.setExecutionLabel(TWITTER_EXECUTION_LABEL);
 
 		Response responseLogin = client.target("http://localhost:8080/almadraba/webapi").path("login").request()
 				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
@@ -41,6 +45,38 @@ public class ChartTest {
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
+		Assert.assertEquals(UserType.TWITTER, chart.getUserType());
+	}
+
+	@Test
+	public void submitDataGenericUser() {
+		Client client = ClientUtils.getClientWithAuthenticationAndJackson();
+
+		AlmadrabaChartParams params = new AlmadrabaChartParams();
+		params.setQueryType(QueryType.TOP);
+		params.setNumber(5);
+		params.setExecutionLabel(GENERIC_EXECUTION_LABEL);
+
+		Response responseLogin = client.target("http://localhost:8080/almadraba/webapi").path("login").request()
+				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
+				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_PASSWORD, "pass")
+				.get();
+		Assert.assertEquals(200, responseLogin.getStatus());
+
+		Response response = client.target("http://localhost:8080/almadraba/webapi").path("chart").request()
+				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
+				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_PASSWORD, "pass")
+				.put(Entity.entity(params, MediaType.APPLICATION_JSON));
+		Assert.assertEquals(200, response.getStatus());
+		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
+		Assert.assertEquals(5, chart.getSeries().length);
+		Assert.assertEquals(20, chart.getStepIds().length);
+		Assert.assertEquals(UserType.GENERIC, chart.getUserType());
+		Assert.assertEquals("216.153.214.94", chart.getSeries(BigInteger.valueOf(1)).getUserId());
+		Assert.assertEquals("gnomz007", chart.getSeries(BigInteger.valueOf(2)).getUserId());
+		Assert.assertEquals("admiraltreydavid", chart.getSeries(BigInteger.valueOf(3)).getUserId());
+		Assert.assertEquals("benaveling", chart.getSeries(BigInteger.valueOf(4)).getUserId());
+		Assert.assertEquals("curranh", chart.getSeries(BigInteger.valueOf(5)).getUserId());
 	}
 
 	@Test
@@ -50,7 +86,7 @@ public class ChartTest {
 		AlmadrabaChartParams params = new AlmadrabaChartParams();
 		params.setQueryType(QueryType.TOP);
 		params.setNumber(5);
-		params.setExecutionLabel("full");
+		params.setExecutionLabel(TWITTER_EXECUTION_LABEL);
 
 		Response responseLogin = client.target("http://localhost:8080/almadraba/webapi").path("login").request()
 				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
@@ -66,6 +102,7 @@ public class ChartTest {
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
+		Assert.assertEquals(UserType.TWITTER, chart.getUserType());
 		Assert.assertEquals(String.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertEquals(String.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
 		Assert.assertEquals(String.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
@@ -74,7 +111,7 @@ public class ChartTest {
 
 		params.setQueryType(QueryType.NEXT);
 		params.setNumber(5);
-		params.setExecutionLabel("full");
+		params.setExecutionLabel(TWITTER_EXECUTION_LABEL);
 		String[] nonPinnedUsers = new String[chart.getSeries().length];
 		for (int i = 0; i < chart.getSeries().length; i++) {
 			nonPinnedUsers[i] = chart.getSeries()[i].getUserId();
@@ -89,6 +126,7 @@ public class ChartTest {
 		chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
+		Assert.assertEquals(UserType.TWITTER, chart.getUserType());
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(1)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(2)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(3)));
@@ -103,7 +141,7 @@ public class ChartTest {
 		AlmadrabaChartParams params = new AlmadrabaChartParams();
 		params.setQueryType(QueryType.TOP);
 		params.setNumber(5);
-		params.setExecutionLabel("full");
+		params.setExecutionLabel(TWITTER_EXECUTION_LABEL);
 
 		Response responseLogin = client.target("http://localhost:8080/almadraba/webapi").path("login").request()
 				.property(HttpAuthenticationFeature.HTTP_AUTHENTICATION_BASIC_USERNAME, "kk")
@@ -119,6 +157,7 @@ public class ChartTest {
 		AlmadrabaChart chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(5, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
+		Assert.assertEquals(UserType.TWITTER, chart.getUserType());
 		Assert.assertEquals(String.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertEquals(String.valueOf(20909329), chart.getSeries(BigInteger.valueOf(2)).getUserId());
 		Assert.assertEquals(String.valueOf(341657886), chart.getSeries(BigInteger.valueOf(3)).getUserId());
@@ -127,7 +166,7 @@ public class ChartTest {
 
 		params.setQueryType(QueryType.NEXT);
 		params.setNumber(5);
-		params.setExecutionLabel("full");
+		params.setExecutionLabel(TWITTER_EXECUTION_LABEL);
 		params.setPinnedUsers(new String[] {String.valueOf(282339186)});
 		String[] nonPinnedUsers = new String[chart.getSeries().length];
 		for (int i = 0; i < chart.getSeries().length; i++) {
@@ -143,6 +182,7 @@ public class ChartTest {
 		chart = response.readEntity(AlmadrabaChart.class);
 		Assert.assertEquals(6, chart.getSeries().length);
 		Assert.assertEquals(17, chart.getStepIds().length);	 // TODO should be 17 ==> careful when loading data from python
+		Assert.assertEquals(UserType.TWITTER, chart.getUserType());
 		Assert.assertEquals(String.valueOf(282339186), chart.getSeries(BigInteger.valueOf(1)).getUserId());
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(2)));
 		Assert.assertNull(chart.getSeries(BigInteger.valueOf(3)));

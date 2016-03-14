@@ -7,9 +7,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.sisifo.almadraba_server.data.IAlmadrabaUser;
+
 @Entity
 @Table(name="tuser")
-public class TweetUser {
+public class TweetUser implements IAlmadrabaUser {
 	
 	@Id
 	private BigInteger id;
@@ -29,6 +31,7 @@ public class TweetUser {
 	private String url;
 	private Integer verified;
 	private Integer withheld;
+	@Override
 	public BigInteger getId() {
 		return id;
 	}
@@ -130,6 +133,12 @@ public class TweetUser {
 	}
 	public void setFollowersCount(final Integer followersCount) {
 		this.followersCount = followersCount;
+	}
+	
+	
+	@Override
+	public String getUserName() {
+		return String.valueOf(this.id);
 	}
 	
 

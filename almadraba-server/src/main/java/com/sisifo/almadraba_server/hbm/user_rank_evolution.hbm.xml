@@ -36,4 +36,10 @@
         <property name="stepTimestamp" type="date" column="step_timestamp"/>
     </class>
 
+    <class name="GenericUser" table="generic_user">
+        <id name="id" type="big_integer" column="user_id"/>
+        <property name="userName" type="string" column="user_name"/>
+        <property name="otherData" type="string" column="other_data"/>
+    </class>
+
 </hibernate-mapping>

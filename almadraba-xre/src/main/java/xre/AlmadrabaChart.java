@@ -2,13 +2,50 @@ package xre;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
 
 public class AlmadrabaChart {
+
+	public enum UserType {
+		TWITTER,
+		GENERIC;
+		
+		private static Map<String, UserType> namesMap = new HashMap<String, UserType>();
+		
+		static {
+			namesMap.put("twitter", UserType.TWITTER);
+			namesMap.put("generic", UserType.GENERIC);
+		}
+		
+		@JsonCreator
+		public static UserType forValue(final String value) {
+			if (namesMap.get(value) == null) {
+				return GENERIC;
+			}
+			return namesMap.get(value);
+		}
+		
+		@JsonValue
+		public String toValue() {
+			for (String key : namesMap.keySet()) {
+				if (namesMap.get(key) == this) {
+					return key;
+				}
+			}
+			return "generic";
+		}
+	}
+
 
 	private AlmadrabaSeries[] series;
 	private Integer rankExecId;
 	private String rankExecLabel;
 	private Integer hourStep;
+	private UserType userType;
 	private String[] stepIds;
 	
 	public AlmadrabaChart() {
@@ -95,4 +132,12 @@ public class AlmadrabaChart {
 		return null;
 	}
 
+	public UserType getUserType() {
+		return userType;
+	}
+
+	public void setUserType(final UserType userType) {
+		this.userType = userType;
+	}
+	
 }

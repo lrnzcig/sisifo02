@@ -12,8 +12,8 @@ import java.math.BigInteger;
  */
 public interface IAlmadrabaUser {
 	
-	BigInteger getUserId();
+	BigInteger getId();
 	
-	String getPublicUserName();
+	String getUserName();
 
 }

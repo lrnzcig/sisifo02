@@ -21,13 +21,13 @@ import org.hibernate.type.IntegerType;
 import org.hibernate.type.Type;
 
 import com.sisifo.almadraba_server.hbm.Tweet;
-import com.sisifo.almadraba_server.hbm.TweetUser;
 import com.sisifo.almadraba_server.hbm.UserRankEvolution;
 import com.sisifo.almadraba_server.hbm.UserRankEvolutionId;
 import com.sisifo.almadraba_server.hbm.UserRankExec;
 import com.sisifo.almadraba_server.hbm.UserRankExecStep;
 
 import xre.AlmadrabaChart;
+import xre.AlmadrabaChart.UserType;
 import xre.AlmadrabaSeries;
 
 public class DatabaseUtils {
@@ -67,18 +67,6 @@ public class DatabaseUtils {
 		return criteria.list();
 	}
 	
-	public static TweetUser getTweetUser(final Session session, final BigInteger userId) {
-		Criteria tuserC = session.createCriteria(TweetUser.class)
-				.add(Property.forName("id").eq(userId));
-		
-		@SuppressWarnings("unchecked")
-		List<TweetUser> users = tuserC.list();
-		if (users.isEmpty()) {
-			return null;
-		}
-		return users.get(0);
-	}
-
 	public static Tweet getTweetUserFamousTweet(final Session session, final BigInteger userId) {
 		Criteria tweetC = session.createCriteria(Tweet.class)
 				.add(Property.forName("userId").eq(userId))
@@ -233,12 +221,12 @@ public class DatabaseUtils {
 
 	
 	public static void addDatabaseRowsToChartSeries(final Session session, final AlmadrabaChart chart, final Integer rankExecId,
-			final List<UserRankEvolution> rows) {
+			final UserType userType, final List<UserRankEvolution> rows) {
 		Map<BigInteger, AlmadrabaSeries> mapSeries = new HashMap<BigInteger, AlmadrabaSeries>();
 		for (UserRankEvolution upre : rows) {
 			BigInteger id = upre.getId().getUserId();
 			if (mapSeries.get(id) == null) {
-				mapSeries.put(id, new AlmadrabaSeries(UserUtils.getUserPublicName(id)));
+				mapSeries.put(id, new AlmadrabaSeries(UserUtils.getUserPublicName(session, id, userType)));
 			}
 			
 			AlmadrabaSeries series = mapSeries.get(id);
@@ -253,6 +241,7 @@ public class DatabaseUtils {
 		UserRankExec exec = getUserRankExec(session, rankExecId);
 		chart.setRankExecLabel(exec.getRankExecLabel());
 		chart.setHourStep(exec.getHourStep());
+		chart.setUserType(userType);
 		
 		List<UserRankExecStep> execSteps = getUserRankExecStep(session, rankExecId);
 		for (UserRankExecStep execStep : execSteps) {
