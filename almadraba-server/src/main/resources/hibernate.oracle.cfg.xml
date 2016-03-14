@@ -30,7 +30,7 @@
         
         <property name="hibernate.current_session_context_class">thread</property>
 
-        <mapping resource="com/sisifo/almadraba_server/hbm/user_page_rank_evolution.hbm.xml"/>
+        <mapping resource="com/sisifo/almadraba_server/hbm/user_rank_evolution.hbm.xml"/>
         <mapping resource="com/sisifo/almadraba_server/hbm/tweets.hbm.xml"/>
 
     </session-factory>
