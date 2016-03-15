@@ -165,9 +165,13 @@ define("main",
       });
       $('#log-in').click(ajax_login.onClick);
 
+			// informed by the chart
+			var user_type;
+
       // Submit data controller
       ajax_submit_data.setActionFunction(function(data) {
         var chart = chart_controller.getChartInstance();
+				user_type = data.userType;
         if (data.series) {
           if (is_chart_collapsed()) {
             chart_collapse.click();
@@ -197,23 +201,33 @@ define("main",
 			// Get user details controllers
 			ajax_user_details.setActionFunction(function(data) {
 				if (data.userId) {
+					if (data.userType == "twitter") {
+						document.getElementById("user-box-id-h5").innerText = "id	"
+					}
 					document.getElementById("user-box-id").value = data.userId;
 				}
-				if (data.statusesCount) {
-					document.getElementById("user-box-tweets").value = data.statusesCount;					
-				}
-				if (data.friendsCount) {
-					document.getElementById("user-box-friends").value = data.friendsCount;
-				}
-				if (data.followersCount) {
-					document.getElementById("user-box-followers").value = data.followersCount;
-				}
-				if (data.notoriousTweetText) {
-					document.getElementById("user-box-notorious-tweet").value = data.notoriousTweetText;
+				if (data.attributes) {
+					var i = 1;
+					for (var key in data.attributes) {
+						document.getElementById("user-box-attribute" + i).value = data.attributes[key]
+						document.getElementById("user-box-attribute" + i + "-h5").innerText = key
+						i = i + 1
+					}
 				}
 			});
 			ajax_user_details.setGetInputDataFunction(function() {
-				return get_selected_user();
+				if (user_type == "twitter") {
+					input_data = {
+	          "userId" : get_selected_user(),
+	          "userType":  user_type
+	        }
+				} else {
+					input_data = {
+	          "userPublicName" : get_selected_user(),
+	          "userType":  user_type
+	        }
+				}
+				return input_data;
 			});
 			var selected_user;
 			var set_selected_user = function(user) {
