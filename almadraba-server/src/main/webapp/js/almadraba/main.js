@@ -50,9 +50,9 @@ define("main",
       user_details_collapse.click();
 
       // function to detect is element is collapsed
-      var is_chart_collapsed = function() {
-        var button_chart_collapse = $(chart_collapse).find("i");
-        var classList = button_chart_collapse.attr("class").split(/\s+/);
+      var is_collapsed = function(collapsable_element) {
+        var button_collapse = $(collapsable_element).find("i");
+        var classList = button_collapse.attr("class").split(/\s+/);
         var arrayLength = classList.length;
         for (var i=0; i < arrayLength; i++) {
           if (classList[i] == "fa-chevron-up") {
@@ -117,7 +117,9 @@ define("main",
                                       });
 																	set_selected_user(this.series.name);
 																	ajax_user_details.onClick();
-																	document.getElementById("user-details-collapse").click();
+																	if (is_collapsed(user_details_collapse)) {
+																		user_details_collapse.click();
+																	}
                               },
 															click: function () {
 																toggle_pinned_users(this.series.name);
@@ -129,7 +131,6 @@ define("main",
                               if (this.chart.lbl) {
                                   this.chart.lbl.hide();
                               }
-															document.getElementById("user-details-collapse").click();
                           }
                       }
                   }
@@ -151,8 +152,20 @@ define("main",
 
       // controller factory
       var selected_execution_label_controller = factory.createController("combo_controller");
+			selected_execution_label_controller.triggerAction = function() {
+				// collapse user details
+				if (! is_collapsed(user_details_collapse)) {
+					user_details_collapse.click();
+				}
+			};
       selected_execution_label_controller.init("select-execution");
       var selected_type_of_query_controller = factory.createController("combo_controller");
+			selected_type_of_query_controller.triggerAction = function() {
+				// collapse user details
+				if (! is_collapsed(user_details_collapse)) {
+					user_details_collapse.click();
+				}
+			};
       selected_type_of_query_controller.init("select-type-of-query");
 
       // Login button controller
@@ -173,7 +186,7 @@ define("main",
         var chart = chart_controller.getChartInstance();
 				user_type = data.userType;
         if (data.series) {
-          if (is_chart_collapsed()) {
+          if (is_collapsed(chart_collapse)) {
             chart_collapse.click();
           }
           chart.set_series(data.series);
@@ -185,6 +198,10 @@ define("main",
         }
       });
       ajax_submit_data.setGetInputDataFunction(function() {
+				// collapse user details
+				if (! is_collapsed(user_details_collapse)) {
+					user_details_collapse.click();
+				}
         // utility for getting input from form
         number_of_users = document.getElementById('number-of-users').value
         input_data = {
@@ -330,7 +347,7 @@ require.config({
 				deps: ["jquery"]
 			},
 			inspinia: {
-				deps: ["jquery"]
+				deps: ["jquery", "bootstrap"]
 			},
 			pace: {
 				deps: ["jquery"]
