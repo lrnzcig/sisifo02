@@ -219,9 +219,12 @@ define("main",
 			ajax_user_details.setActionFunction(function(data) {
 				if (data.userId) {
 					if (data.userType == "twitter") {
-						document.getElementById("user-box-id-h5").innerText = "id	"
+						document.getElementById("user-box-id-h5").innerText = "id"
+						document.getElementById("user-box-id").value = data.userId;
+					} else {
+						document.getElementById("user-box-id-h5").innerText = "name"
+						document.getElementById("user-box-id").value = data.userPublicName;						
 					}
-					document.getElementById("user-box-id").value = data.userId;
 				}
 				if (data.attributes) {
 					var i = 1;

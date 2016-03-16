@@ -9,6 +9,9 @@ import javax.persistence.Table;
 
 import com.sisifo.almadraba_server.data.IAlmadrabaUser;
 
+import xre.AlmadrabaChart.UserType;
+import xre.AlmadrabaUser;
+
 @Entity
 @Table(name="tuser")
 public class TweetUser implements IAlmadrabaUser {
@@ -139,6 +142,18 @@ public class TweetUser implements IAlmadrabaUser {
 	@Override
 	public String getUserName() {
 		return String.valueOf(this.id);
+	}
+	@Override
+	public AlmadrabaUser getXRE() {
+		AlmadrabaUser output = new AlmadrabaUser();
+		output.setUserType(UserType.TWITTER);
+		output.setUserId(getId());
+		output.setUserPublicName(String.valueOf(getId()));
+
+		output.addAttribute(AlmadrabaUser.TWITTER_FOLLOWERS_COUNT_ATTR, getFollowersCount());			
+		output.addAttribute(AlmadrabaUser.TWITTER_FRIENDS_COUNT_ATTR, getFriendsCount());	
+		output.addAttribute(AlmadrabaUser.TWITTER_STATUSES_COUNT_ATTR, getStatusesCount());
+		return output;
 	}
 	
 

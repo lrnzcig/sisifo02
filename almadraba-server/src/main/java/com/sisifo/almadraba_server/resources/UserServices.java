@@ -12,10 +12,9 @@ import org.hibernate.Session;
 import com.sisifo.almadraba_server.AlmadrabaContextListener;
 import com.sisifo.almadraba_server.data.AlmadrabaUserFactory;
 import com.sisifo.almadraba_server.data.DatabaseUtils;
+import com.sisifo.almadraba_server.data.IAlmadrabaUser;
 import com.sisifo.almadraba_server.exception.AlmadrabaAuthenticationException;
-import com.sisifo.almadraba_server.hbm.GenericUser;
 import com.sisifo.almadraba_server.hbm.Tweet;
-import com.sisifo.almadraba_server.hbm.TweetUser;
 
 import xre.AlmadrabaChart.UserType;
 import xre.AlmadrabaUser;
@@ -34,31 +33,16 @@ public class UserServices {
     	Session session = AlmadrabaContextListener.getSessionFactory().getCurrentSession();
 		session.beginTransaction();
 
-		AlmadrabaUser output = new AlmadrabaUser();
-		output.setUserType(input.getUserType());
 		
+		IAlmadrabaUser user = AlmadrabaUserFactory.getUser(session, input.getUserPublicName(), input.getUserType());
+		AlmadrabaUser output = user.getXRE();
+
 		if (UserType.TWITTER.equals(input.getUserType())) {
-			TweetUser tuser = (TweetUser) AlmadrabaUserFactory.getUser(session, input.getUserId(), input.getUserType());
-
-			output.setUserId(input.getUserId());
-
-			output.addAttribute(AlmadrabaUser.TWITTER_FOLLOWERS_COUNT_ATTR, tuser.getFollowersCount());			
-			output.addAttribute(AlmadrabaUser.TWITTER_FRIENDS_COUNT_ATTR, tuser.getFriendsCount());	
-			output.addAttribute(AlmadrabaUser.TWITTER_STATUSES_COUNT_ATTR, tuser.getStatusesCount());
 			Tweet famousTweet = DatabaseUtils.getTweetUserFamousTweet(session, input.getUserId());
 			if (famousTweet != null) {
 				output.addAttribute(AlmadrabaUser.TWITTER_NOTORIOUS_TWEET_ATTR, famousTweet.getText());
 			}
-		} else {
-			GenericUser guser = (GenericUser) AlmadrabaUserFactory.getUser(session, input.getUserPublicName(), input.getUserType());
-
-			output.setUserPublicName(input.getUserPublicName());
-			
-			output.setUserId(guser.getId());
-			output.setAttributes(guser.getOtherDataAttributes());
-			output.addAttribute(AlmadrabaUser.GENERIC_GLOBAL_RANK_ATTR, String.valueOf(guser.getGlobalRank()));
 		}
-		
 		return output;
 	}
 }

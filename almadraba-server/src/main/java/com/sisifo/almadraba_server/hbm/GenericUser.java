@@ -14,6 +14,9 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.sisifo.almadraba_server.data.IAlmadrabaUser;
 
+import xre.AlmadrabaChart.UserType;
+import xre.AlmadrabaUser;
+
 @Entity
 @Table(name="generic_user")
 public class GenericUser implements IAlmadrabaUser {
@@ -80,6 +83,18 @@ public class GenericUser implements IAlmadrabaUser {
 		Gson gson = builder.create();
 		Type typeOfMap = new TypeToken<Map<String, String>>(){}.getType();
 		return gson.fromJson(this.otherData, typeOfMap);
+	}
+
+	@Override
+	public AlmadrabaUser getXRE() {
+		AlmadrabaUser output = new AlmadrabaUser();
+		output.setUserType(UserType.GENERIC);
+		output.setUserId(getId());
+		output.setUserPublicName(getUserName());
+		
+		output.setAttributes(getOtherDataAttributes());
+		output.addAttribute(AlmadrabaUser.GENERIC_GLOBAL_RANK_ATTR, String.valueOf(getGlobalRank()));
+		return output;
 	}
 
 }
